@@ -28,6 +28,16 @@ func init() {
 				Ui:   ui,
 			}, nil
 		},
+
+		"run": func() (cli.Command, error) {
+			return &command.RunCommand{
+				Name: "run",
+				Ui:   ui,
+			}, nil
+		},
+
 	}
+
+
 
 }
