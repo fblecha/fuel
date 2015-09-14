@@ -48,8 +48,8 @@ func createAppRootDir(name string) error {
 
 func createChildDirs(appDir string) {
 	childDirs := [...]haikuDir{
-		{appDir, "content"},    //the primary app location -- most new code will go in here
-		{appDir, "config"}, //central source for the app config
+		{appDir, "content"}, //the primary app location -- most new code will go in here
+		{appDir, "config"},  //central source for the app config
 	}
 	for _, child := range childDirs {
 		if err := child.Create(); err != nil {
