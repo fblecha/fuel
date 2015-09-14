@@ -1,4 +1,4 @@
-package main
+package command
 
 import (
 	//"log"
@@ -13,17 +13,17 @@ func appErrorMessage() error {
 Hi there!  You likely wanted to execute this command in a haiku project directory.
 For example, if you ran:
 
-$ cd ~/code
-$ haiku new todo
+$ cd ~/website
+$ haiku new blog
 
-then ~/code/todo is your haiku project dir.  It'll have a polka/app haiku/config,
+then ~/website/blog is your haiku project dir.  It'll have a haiku/content haiku/config,
 and the rest of the haiku generated files.
 
 This time you ran haiku in %v
 `, currentDir)
 }
 
-func areWeInProjectDir() (string, error) {
+func AreWeInProjectDir() (string, error) {
 	currentDir, err := os.Getwd()
 	if err != nil {
 		return "", err

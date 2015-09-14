@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/fblecha/haiku/command"
 	"github.com/mitchellh/cli"
 	"log"
 	"os"
@@ -15,7 +16,7 @@ func main() {
 	cli := &cli.CLI{
 		Args:     args,
 		Commands: Commands,
-		HelpFunc: cli.BasicHelpFunc("polka"),
+		HelpFunc: cli.BasicHelpFunc("haiku"),
 	}
 
 	exitStatus, err := cli.Run()
@@ -32,7 +33,7 @@ func handleCommandOutsideOfProjectDir(args []string) {
 		case "new":
 			//do nothing in the case of the "new" command
 		default:
-			if _, err := areWeInProjectDir(); err == nil {
+			if _, err := command.AreWeInProjectDir(); err == nil {
 				//otherwise, make sure we have the AppConfig setup
 			} else {
 				log.Println(err)

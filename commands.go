@@ -7,7 +7,7 @@ import (
 	"github.com/mitchellh/cli"
 )
 
-// Commands is the mapping of all the available Polka commands.
+// Commands is the mapping of all the available haiku commands.
 var Commands map[string]cli.CommandFactory
 
 func init() {
@@ -15,13 +15,19 @@ func init() {
 
 	Commands = map[string]cli.CommandFactory{
 
+		"create": func() (cli.Command, error) {
+			return &command.CreateCommand{
+				Name: "create",
+				Ui:   ui,
+			}, nil
+		},
+
 		"new": func() (cli.Command, error) {
 			return &command.NewCommand{
 				Name: "new",
 				Ui:   ui,
 			}, nil
 		},
-
 	}
 
 }
