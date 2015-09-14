@@ -11,3 +11,8 @@ I wanted to create a series of content that would be available by both an API an
 
 ## Databases supported
 * (WIP) postgresql
+* 
+## Expected support
+- Create new content
+- Publish new content
+- Save you content to a database
