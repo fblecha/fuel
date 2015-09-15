@@ -11,6 +11,10 @@ func main() {
 	args := os.Args[1:]
 	var err error
 
+
+
+
+
 	handleCommandOutsideOfProjectDir(args)
 
 	cli := &cli.CLI{

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"path/filepath"
 	"io/ioutil"
+	"regexp"
 	"github.com/russross/blackfriday"
 	//"text/template"
 )
@@ -61,21 +62,54 @@ func createPublicDir(appDir string) error {
 
 func renderHaiku(path string) {
 	fmt.Printf("%s \n", path )
-	if input, err := ioutil.ReadFile(path); err != nil {
-		output := blackfriday.MarkdownCommon(input)
-		fmt.Println(output)
-	} else {
-		log.Fatal(err)
-	}
 
+	if appDir, err := AreWeInProjectDir(); err == nil {
+		if input, err := ioutil.ReadFile(path); err == nil {
+			output := blackfriday.MarkdownCommon(input)
+
+			re := regexp.MustCompile("/content/(.+)")
+			//locs := re.FindStringIndex(path)
+			//oldPath := path[locs[0]:locs[1]]
+			fmt.Printf("submatch = %q \n", re.FindStringSubmatch(path) )
+			//fmt.Printf("from: %s \n to: %s \n\n", oldPath, newPath )
+			if matches := re.FindStringSubmatch(path); matches != nil && len(matches)==2 {
+				oldPath := matches[1]
+				//tmpPath is the expected location before some manipulation around the filename, e.g. convert
+				// blah.haiku to blah.html
+				tmpPath := fmt.Sprintf("%s/public/%s", appDir, oldPath)
+
+				//convert from .haiku to .html
+				filename := filepath.Base(tmpPath)
+				extensionIndex := strings.LastIndex(filename, ".")
+				newFilename := filename[0:extensionIndex]
+				//finally make the new dir and the new path (for the file to be created
+				newDir := filepath.Dir(tmpPath)
+				newPath := fmt.Sprintf("%s/%s.html", newDir, newFilename)
+
+				//make the new dir in public
+				os.MkdirAll(newDir, 0777)
+				//output is a []byte -- write it to a file
+				err = ioutil.WriteFile(newPath, output, 0644)
+			}
+
+
+
+
+			fmt.Println(output)
+		} else {
+			log.Fatal(err)
+		}
+	}
 }
 
 func walkpath(path string, f os.FileInfo, err error) error {
+
 	switch filepath.Ext(path) {
-	case ".haiku":
-		renderHaiku(path)
-	}
+		case ".haiku":
+			renderHaiku(path)
+		}
 	return nil
+
 }
 
 func renderAllContent(appDir string) error {
