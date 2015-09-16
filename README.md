@@ -1,3 +1,7 @@
+[![Build Status](https://drone.io/github.com/fblecha/haiku/status.png)](https://drone.io/github.com/fblecha/haiku/latest)
+[![GoDoc](https://godoc.org/github.com/fblecha/haiku?status.svg)](https://godoc.org/github.com/fblecha/haiku)
+
+
 WIP - do not use until there's a release
 
 # haiku
@@ -11,7 +15,7 @@ I wanted to create a series of content that would be available by both an API an
 
 ## Databases supported
 * (WIP) postgresql
-* 
+*
 ## Expected support
 - Create new content
 - Publish new content
