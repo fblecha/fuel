@@ -1,3 +1,4 @@
+//haiku generates a static html site from a markdown dialect, while also putting metadata into a datastore.
 package main
 
 import (
