@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"regexp"
 	"github.com/russross/blackfriday"
+	"github.com/microcosm-cc/bluemonday"
 	//"text/template"
 )
 
@@ -65,7 +66,8 @@ func renderHaiku(path string) {
 
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		if input, err := ioutil.ReadFile(path); err == nil {
-			output := blackfriday.MarkdownCommon(input)
+			unsafe := blackfriday.MarkdownCommon(input)
+			html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 			re := regexp.MustCompile("/content/(.+)")
 			//locs := re.FindStringIndex(path)
@@ -79,28 +81,32 @@ func renderHaiku(path string) {
 				tmpPath := fmt.Sprintf("%s/public/%s", appDir, oldPath)
 
 				//convert from .haiku to .html
-				filename := filepath.Base(tmpPath)
-				extensionIndex := strings.LastIndex(filename, ".")
-				newFilename := filename[0:extensionIndex]
-				//finally make the new dir and the new path (for the file to be created
-				newDir := filepath.Dir(tmpPath)
-				newPath := fmt.Sprintf("%s/%s.html", newDir, newFilename)
+				newDir, newPath := convertFromHaikuToHTML(tmpPath)
 
 				//make the new dir in public
 				os.MkdirAll(newDir, 0777)
 				//output is a []byte -- write it to a file
-				err = ioutil.WriteFile(newPath, output, 0644)
+
+				err = ioutil.WriteFile(newPath, html, 0644)
 			}
 
-
-
-
-			fmt.Println(output)
 		} else {
 			log.Fatal(err)
 		}
 	}
 }
+
+func convertFromHaikuToHTML(tmpPath string) (string, string) {
+	filename := filepath.Base(tmpPath)
+	extensionIndex := strings.LastIndex(filename, ".")
+	newFilename := filename[0:extensionIndex]
+	//finally make the new dir and the new path (for the file to be created
+	newDir := filepath.Dir(tmpPath)
+	newPath := fmt.Sprintf("%s/%s.html", newDir, newFilename)
+	return newDir, newPath
+}
+
+
 
 func walkpath(path string, f os.FileInfo, err error) error {
 
