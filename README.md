@@ -1,5 +1,6 @@
 [![Build Status](https://drone.io/github.com/fblecha/haiku/status.png)](https://drone.io/github.com/fblecha/haiku/latest)
 [![GoDoc](https://godoc.org/github.com/fblecha/haiku?status.svg)](https://godoc.org/github.com/fblecha/haiku)
+[![Coverage Status](https://coveralls.io/repos/fblecha/haiku/badge.svg?branch=master&service=github)](https://coveralls.io/github/fblecha/haiku?branch=master)
 
 
 WIP - do not use until there's a release
