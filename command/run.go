@@ -62,18 +62,15 @@ func createPublicDir(appDir string) error {
 }
 
 func renderHaiku(path string) {
-	fmt.Printf("%s \n", path )
 
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		if input, err := ioutil.ReadFile(path); err == nil {
-			unsafe := blackfriday.MarkdownCommon(input)
+
+			renderer, extensions := configureBlackFriday(path)
+			unsafe := blackfriday.Markdown(input, renderer, extensions)
 			html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 			re := regexp.MustCompile("/content/(.+)")
-			//locs := re.FindStringIndex(path)
-			//oldPath := path[locs[0]:locs[1]]
-			fmt.Printf("submatch = %q \n", re.FindStringSubmatch(path) )
-			//fmt.Printf("from: %s \n to: %s \n\n", oldPath, newPath )
 			if matches := re.FindStringSubmatch(path); matches != nil && len(matches)==2 {
 				oldPath := matches[1]
 				//tmpPath is the expected location before some manipulation around the filename, e.g. convert
@@ -127,4 +124,25 @@ func renderAllContent(appDir string) error {
 	//TODO also update the persistance layer
 
 	return nil
+}
+
+func configureBlackFriday(path string) (blackfriday.Renderer, int) {
+	htmlFlags := 0
+	//htmlFlags |= blackfriday.HTML_USE_XHTML
+	htmlFlags |= blackfriday.HTML_COMPLETE_PAGE
+	title := filepath.Base(path)
+	css := ""
+	renderer := blackfriday.HtmlRenderer(htmlFlags, title, css)
+
+	extensions := 0
+	extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
+	extensions |= blackfriday.EXTENSION_TABLES
+	extensions |= blackfriday.EXTENSION_FENCED_CODE
+	extensions |= blackfriday.EXTENSION_AUTOLINK
+	extensions |= blackfriday.EXTENSION_STRIKETHROUGH
+	extensions |= blackfriday.EXTENSION_SPACE_HEADERS
+
+	return renderer, extensions
+
+
 }
