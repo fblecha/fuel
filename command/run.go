@@ -127,9 +127,7 @@ func renderAllContent(appDir string) error {
 }
 
 func configureBlackFriday(path string) (blackfriday.Renderer, int) {
-	htmlFlags := 0
-	//htmlFlags |= blackfriday.HTML_USE_XHTML
-	htmlFlags |= blackfriday.HTML_COMPLETE_PAGE
+	htmlFlags := blackfriday.HTML_COMPLETE_PAGE
 	title := filepath.Base(path)
 	css := ""
 	renderer := blackfriday.HtmlRenderer(htmlFlags, title, css)
