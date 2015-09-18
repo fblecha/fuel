@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"io/ioutil"
 	"regexp"
-	"github.com/russross/blackfriday"
-	"github.com/microcosm-cc/bluemonday"
+	"github.com/fblecha/blackfriday"
+	//"github.com/microcosm-cc/bluemonday"
 	//"text/template"
 )
 
@@ -67,8 +67,8 @@ func renderHaiku(path string) {
 		if input, err := ioutil.ReadFile(path); err == nil {
 
 			renderer, extensions := configureBlackFriday(path)
-			unsafe := blackfriday.Markdown(input, renderer, extensions)
-			html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+			html := blackfriday.Markdown(input, renderer, extensions)
+			//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 			re := regexp.MustCompile("/content/(.+)")
 			if matches := re.FindStringSubmatch(path); matches != nil && len(matches)==2 {
@@ -93,16 +93,21 @@ func renderHaiku(path string) {
 	}
 }
 
-func convertFromHaikuToHTML(tmpPath string) (string, string) {
-	filename := filepath.Base(tmpPath)
+func getFilenameMinusExtension(path string) string {
+	filename := filepath.Base(path)
 	extensionIndex := strings.LastIndex(filename, ".")
 	newFilename := filename[0:extensionIndex]
+	return newFilename
+}
+
+
+func convertFromHaikuToHTML(tmpPath string) (string, string) {
+	newFilename := getFilenameMinusExtension(tmpPath)
 	//finally make the new dir and the new path (for the file to be created
 	newDir := filepath.Dir(tmpPath)
 	newPath := fmt.Sprintf("%s/%s.html", newDir, newFilename)
 	return newDir, newPath
 }
-
 
 
 func walkpath(path string, f os.FileInfo, err error) error {
@@ -128,7 +133,7 @@ func renderAllContent(appDir string) error {
 
 func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 	htmlFlags := blackfriday.HTML_COMPLETE_PAGE
-	title := filepath.Base(path)
+	title := getFilenameMinusExtension(path)
 	css := ""
 	renderer := blackfriday.HtmlRenderer(htmlFlags, title, css)
 
