@@ -10,6 +10,10 @@ import (
 	"io/ioutil"
 	"regexp"
 	"github.com/fblecha/blackfriday"
+	//"encoding/json"
+	//"bufio"
+	"bytes"
+
 	//"github.com/microcosm-cc/bluemonday"
 	//"text/template"
 )
@@ -66,6 +70,11 @@ func renderHaiku(path string) {
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		if input, err := ioutil.ReadFile(path); err == nil {
 
+			if err := parseJSON(path); err != nil {
+				fmt.Printf("error in parse = %s \n", err)
+			}
+
+
 			renderer, extensions := configureBlackFriday(path)
 			html := blackfriday.Markdown(input, renderer, extensions)
 			//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
@@ -111,13 +120,11 @@ func convertFromHaikuToHTML(tmpPath string) (string, string) {
 
 
 func walkpath(path string, f os.FileInfo, err error) error {
-
 	switch filepath.Ext(path) {
 		case ".haiku":
 			renderHaiku(path)
 		}
 	return nil
-
 }
 
 func renderAllContent(appDir string) error {
@@ -146,6 +153,49 @@ func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 	extensions |= blackfriday.EXTENSION_SPACE_HEADERS
 
 	return renderer, extensions
+}
+
+func parseJSON(path string) error {
+
+	if jsonStr, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
+		fmt.Println(jsonStr)
+		fmt.Println(markdownStr)
+		return nil
+	} else {
+		return err
+	}
+}
+
+// func parseJSON2(json string) error {
+// 	var f interface{}
+// 	file, err := os.Open(path)
+// 	defer file.Close()
+// 	if err == nil {
+// 		jsonParser := json.NewDecoder(file)
+// 		if err = jsonParser.Decode(&f); err == nil {
+// 			//err := json.Unmarshal(b, &f)
+// 			log.Printf("%v \n", f)
+// 			return nil
+// 		} else {
+// 			return err
+// 		}
+// 	} else {
+// 		return err
+// 	}
+//
+// }
 
 
+func SplitJsonAndMarkdown(filename string) (string, string, error) {
+  var results [2]string
+  if str, err := ioutil.ReadFile(filename); err == nil {
+    for i, rune := range bytes.Split(str, []byte{'~','~','~'}) { //split by "~~~"
+      fmt.Printf("Counter %d :  %s\n", i , string(rune))
+      results[i] = string(rune)
+    }
+
+    return results[0], results[1], nil
+  } else {
+    return "", "", err
+  }
 }
