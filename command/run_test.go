@@ -11,7 +11,7 @@ func TestSplitJsonAndMarkdown(t *testing.T) {
   fmt.Println("blah")
   // Open the file.
 
-  if json, markdown, err := SplitJsonAndMarkdown("../example/content/dogs/labrador_retriever.haiku"); err != nil {
+  if _, _, err := SplitJsonAndMarkdown("../example/content/dogs/labrador_retriever.haiku"); err != nil {
     t.Error(err)
   }
 }
