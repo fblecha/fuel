@@ -10,7 +10,7 @@ import (
 	"io/ioutil"
 	"regexp"
 	"github.com/fblecha/blackfriday"
-	//"encoding/json"
+	"encoding/json"
 	//"bufio"
 	"bytes"
 
@@ -35,20 +35,19 @@ Generate the curent haiku blog in blog/public
 
 
 func (c *RunCommand) Run(args []string) int {
-
+	//TODO refactor this into a sequence of functions that are applied via a loop ?
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		//create public dir
-		err := createPublicDir(appDir)
-		if err != nil {
+		if err := createPublicDir(appDir); err != nil {
 			log.Fatal(err)
 			return 1
 		}
 		//render all content
-		err = renderAllContent(appDir)
-		if err != nil {
+		if err := renderAllContent(appDir); err != nil {
 			log.Fatal(err)
 			return 1
 		}
+		//both of the commands worked, we're good to go
 		return 0
 	} else {
 		log.Fatal(err)
@@ -57,7 +56,7 @@ func (c *RunCommand) Run(args []string) int {
 }
 
 func (c *RunCommand) Synopsis() string {
-	return "processes all the content to create a new Haiku blog"
+	return "process all the content to create a new Haiku blog"
 }
 
 func createPublicDir(appDir string) error {
@@ -70,10 +69,9 @@ func renderHaiku(path string) {
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		if input, err := ioutil.ReadFile(path); err == nil {
 
-			if err := parseJSON(path); err != nil {
+			if err := parseJSONAndMarkdown(path); err != nil {
 				fmt.Printf("error in parse = %s \n", err)
 			}
-
 
 			renderer, extensions := configureBlackFriday(path)
 			html := blackfriday.Markdown(input, renderer, extensions)
@@ -155,7 +153,7 @@ func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 	return renderer, extensions
 }
 
-func parseJSON(path string) error {
+func parseJSONAndMarkdown(path string) error {
 
 	if jsonStr, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
 		fmt.Println(jsonStr)
@@ -166,24 +164,16 @@ func parseJSON(path string) error {
 	}
 }
 
-// func parseJSON2(json string) error {
-// 	var f interface{}
-// 	file, err := os.Open(path)
-// 	defer file.Close()
-// 	if err == nil {
-// 		jsonParser := json.NewDecoder(file)
-// 		if err = jsonParser.Decode(&f); err == nil {
-// 			//err := json.Unmarshal(b, &f)
-// 			log.Printf("%v \n", f)
-// 			return nil
-// 		} else {
-// 			return err
-// 		}
-// 	} else {
-// 		return err
-// 	}
-//
-// }
+func parseJSON(JSON string) (interface{}, error) {
+	var f interface{}
+	if  err := json.Unmarshal([]byte(JSON), &f); err == nil {
+		//err := json.Unmarshal(b, &f)
+		log.Printf("%v \n", f)
+		return f, nil
+	} else {
+		return nil, err
+	}
+}
 
 
 func SplitJsonAndMarkdown(filename string) (string, string, error) {
