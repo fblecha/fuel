@@ -62,48 +62,45 @@ func createPublicDir(appDir string) error {
 	return os.MkdirAll(publicDir, 0777)
 }
 
-func renderHaiku(path string) {
+func renderHaiku(path string) error {
 
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		//if input, err := ioutil.ReadFile(path); err == nil {
-		if _, err := ioutil.ReadFile(path); err == nil {
+		//if _, err := ioutil.ReadFile(path); err == nil {
 
-			if err := parseJSONAndMarkdown(path); err != nil {
-				fmt.Printf("error in parse = %s \n", err)
-			}
-
-			//jsonStr, markdownStr, err := splitJsonAndMarkdown(path)
-			_, markdownStr, err := splitJsonAndMarkdown(path)
-			if err != nil {
-				return //TODO update error return
-			}
-
-			renderer, extensions := configureBlackFriday(path)
-			html := blackfriday.Markdown([]byte(markdownStr), renderer, extensions)
-			//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
-
-			re := regexp.MustCompile("/content/(.+)")
-			if matches := re.FindStringSubmatch(path); matches != nil && len(matches) == 2 {
-				oldPath := matches[1]
-				//tmpPath is the expected location before some manipulation around the filename, e.g. convert
-				// blah.haiku to blah.html
-				tmpPath := fmt.Sprintf("%s/public/%s", appDir, oldPath)
-
-				//convert from .haiku to .html
-				newDir, newPath := convertFromHaikuToHTML(tmpPath)
-
-				//make the new dir in public
-				os.MkdirAll(newDir, 0777)
-				//output is a []byte -- write it to a file
-
-				err = ioutil.WriteFile(newPath, html, 0644)
-			}
-
+		//jsonStr, markdownStr, err := splitJsonAndMarkdown(path)
+		if _, markdownStr, err := splitJsonAndMarkdown(path); err == nil {
+			renderMarkdown(appDir, path, markdownStr)
 		} else {
-			log.Fatal(err)
+			return err
 		}
+	} else {
+		return err
+	}
+	return nil
+}
+
+func renderMarkdown(appDir string, path string, markdownContent string) {
+	renderer, extensions := configureBlackFriday(path)
+	html := blackfriday.Markdown([]byte(markdownContent), renderer, extensions)
+	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+
+	re := regexp.MustCompile("/content/(.+)")
+	if matches := re.FindStringSubmatch(path); matches != nil && len(matches) == 2 {
+		oldPath := matches[1]
+		//tmpPath is the expected location before some manipulation around the filename, e.g. convert
+		// blah.haiku to blah.html
+		tmpPath := fmt.Sprintf("%s/public/%s", appDir, oldPath)
+		//convert from .haiku to .html
+		newDir, newPath := convertFromHaikuToHTML(tmpPath)
+		//make the new dir in public
+		os.MkdirAll(newDir, 0777)
+		//output is a []byte -- write it to a file
+
+		ioutil.WriteFile(newPath, html, 0644)
 	}
 }
+
 
 func getFilenameMinusExtension(path string) string {
 	filename := filepath.Base(path)
@@ -156,16 +153,6 @@ func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 	return renderer, extensions
 }
 
-func parseJSONAndMarkdown(path string) error {
-
-	if jsonStr, markdownStr, err := splitJsonAndMarkdown(path); err == nil {
-		fmt.Println(jsonStr)
-		fmt.Println(markdownStr)
-		return nil
-	} else {
-		return err
-	}
-}
 
 func parseJSON(JSON string) (interface{}, error) {
 	var f interface{}
