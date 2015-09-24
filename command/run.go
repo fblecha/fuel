@@ -1,21 +1,19 @@
 package command
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/fblecha/blackfriday"
 	"github.com/mitchellh/cli"
+	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 	"path/filepath"
-	"io/ioutil"
 	"regexp"
-	"github.com/fblecha/blackfriday"
-	"encoding/json"
+	"strings"
 	//"bufio"
 	"bytes"
-
 	//"github.com/microcosm-cc/bluemonday"
-	//"text/template"
 )
 
 type RunCommand struct {
@@ -33,7 +31,6 @@ Generate the curent haiku blog in blog/public
 	return strings.TrimSpace(helpText)
 }
 
-
 func (c *RunCommand) Run(args []string) int {
 	//TODO refactor this into a sequence of functions that are applied via a loop ?
 	if appDir, err := AreWeInProjectDir(); err == nil {
@@ -42,6 +39,7 @@ func (c *RunCommand) Run(args []string) int {
 			log.Fatal(err)
 			return 1
 		}
+
 		//render all content
 		if err := renderAllContent(appDir); err != nil {
 			log.Fatal(err)
@@ -67,18 +65,25 @@ func createPublicDir(appDir string) error {
 func renderHaiku(path string) {
 
 	if appDir, err := AreWeInProjectDir(); err == nil {
-		if input, err := ioutil.ReadFile(path); err == nil {
+		//if input, err := ioutil.ReadFile(path); err == nil {
+		if _, err := ioutil.ReadFile(path); err == nil {
 
 			if err := parseJSONAndMarkdown(path); err != nil {
 				fmt.Printf("error in parse = %s \n", err)
 			}
 
+			//jsonStr, markdownStr, err := splitJsonAndMarkdown(path)
+			_, markdownStr, err := splitJsonAndMarkdown(path)
+			if err != nil {
+				return //TODO update error return
+			}
+
 			renderer, extensions := configureBlackFriday(path)
-			html := blackfriday.Markdown(input, renderer, extensions)
+			html := blackfriday.Markdown([]byte(markdownStr), renderer, extensions)
 			//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 			re := regexp.MustCompile("/content/(.+)")
-			if matches := re.FindStringSubmatch(path); matches != nil && len(matches)==2 {
+			if matches := re.FindStringSubmatch(path); matches != nil && len(matches) == 2 {
 				oldPath := matches[1]
 				//tmpPath is the expected location before some manipulation around the filename, e.g. convert
 				// blah.haiku to blah.html
@@ -107,7 +112,6 @@ func getFilenameMinusExtension(path string) string {
 	return newFilename
 }
 
-
 func convertFromHaikuToHTML(tmpPath string) (string, string) {
 	newFilename := getFilenameMinusExtension(tmpPath)
 	//finally make the new dir and the new path (for the file to be created
@@ -116,12 +120,11 @@ func convertFromHaikuToHTML(tmpPath string) (string, string) {
 	return newDir, newPath
 }
 
-
 func walkpath(path string, f os.FileInfo, err error) error {
 	switch filepath.Ext(path) {
-		case ".haiku":
-			renderHaiku(path)
-		}
+	case ".haiku":
+		renderHaiku(path)
+	}
 	return nil
 }
 
@@ -155,7 +158,7 @@ func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 
 func parseJSONAndMarkdown(path string) error {
 
-	if jsonStr, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
+	if jsonStr, markdownStr, err := splitJsonAndMarkdown(path); err == nil {
 		fmt.Println(jsonStr)
 		fmt.Println(markdownStr)
 		return nil
@@ -166,7 +169,7 @@ func parseJSONAndMarkdown(path string) error {
 
 func parseJSON(JSON string) (interface{}, error) {
 	var f interface{}
-	if  err := json.Unmarshal([]byte(JSON), &f); err == nil {
+	if err := json.Unmarshal([]byte(JSON), &f); err == nil {
 		//err := json.Unmarshal(b, &f)
 		log.Printf("%v \n", f)
 		return f, nil
@@ -175,17 +178,16 @@ func parseJSON(JSON string) (interface{}, error) {
 	}
 }
 
+func splitJsonAndMarkdown(filename string) (string, string, error) {
+	var results [2]string
+	if str, err := ioutil.ReadFile(filename); err == nil {
+		for i, rune := range bytes.Split(str, []byte{'~', '~', '~'}) { //split by "~~~"
+			fmt.Printf("Counter %d :  %s\n", i, string(rune))
+			results[i] = string(rune)
+		}
 
-func SplitJsonAndMarkdown(filename string) (string, string, error) {
-  var results [2]string
-  if str, err := ioutil.ReadFile(filename); err == nil {
-    for i, rune := range bytes.Split(str, []byte{'~','~','~'}) { //split by "~~~"
-      fmt.Printf("Counter %d :  %s\n", i , string(rune))
-      results[i] = string(rune)
-    }
-
-    return results[0], results[1], nil
-  } else {
-    return "", "", err
-  }
+		return results[0], results[1], nil
+	} else {
+		return "", "", err
+	}
 }
