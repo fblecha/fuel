@@ -69,7 +69,7 @@ func renderHaiku(path string) error {
 		//if _, err := ioutil.ReadFile(path); err == nil {
 
 		//jsonStr, markdownStr, err := splitJsonAndMarkdown(path)
-		if _, markdownStr, err := splitJsonAndMarkdown(path); err == nil {
+		if _, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
 			renderMarkdown(appDir, path, markdownStr)
 		} else {
 			return err
@@ -165,7 +165,7 @@ func parseJSON(JSON string) (interface{}, error) {
 	}
 }
 
-func splitJsonAndMarkdown(filename string) (string, string, error) {
+func SplitJsonAndMarkdown(filename string) (string, string, error) {
 	var results [2]string
 	if str, err := ioutil.ReadFile(filename); err == nil {
 		for i, rune := range bytes.Split(str, []byte{'~', '~', '~'}) { //split by "~~~"
