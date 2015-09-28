@@ -69,7 +69,8 @@ func renderHaiku(path string) error {
 		//if _, err := ioutil.ReadFile(path); err == nil {
 
 		//jsonStr, markdownStr, err := splitJsonAndMarkdown(path)
-		if _, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
+		if jsonMap, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
+			storeJSON(jsonMap)
 			renderMarkdown(appDir, path, markdownStr)
 		} else {
 			return err
@@ -77,6 +78,11 @@ func renderHaiku(path string) error {
 	} else {
 		return err
 	}
+	return nil
+}
+
+func storeJSON(json map[string]interface{}) error {
+	fmt.Printf("%s \n", json)
 	return nil
 }
 
@@ -100,7 +106,6 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 		ioutil.WriteFile(newPath, html, 0644)
 	}
 }
-
 
 func getFilenameMinusExtension(path string) string {
 	filename := filepath.Base(path)
@@ -153,28 +158,64 @@ func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 	return renderer, extensions
 }
 
+// func parseJSON(JSON string) (interface{}, error) {
+// 	var f interface{}
+// 	if err := json.Unmarshal([]byte(JSON), &f); err == nil {
+// 		//err := json.Unmarshal(b, &f)
+// 		log.Printf("%v \n", f)
+// 		return f, nil
+// 	} else {
+// 		return nil, err
+// 	}
+// }
 
-func parseJSON(JSON string) (interface{}, error) {
-	var f interface{}
-	if err := json.Unmarshal([]byte(JSON), &f); err == nil {
-		//err := json.Unmarshal(b, &f)
-		log.Printf("%v \n", f)
-		return f, nil
-	} else {
-		return nil, err
-	}
-}
-
-func SplitJsonAndMarkdown(filename string) (string, string, error) {
+func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, error) {
 	var results [2]string
 	if str, err := ioutil.ReadFile(filename); err == nil {
 		for i, rune := range bytes.Split(str, []byte{'~', '~', '~'}) { //split by "~~~"
-			fmt.Printf("Counter %d :  %s\n", i, string(rune))
+			//fmt.Printf("Counter %d :  %s\n", i, string(rune))
 			results[i] = string(rune)
 		}
 
-		return results[0], results[1], nil
+		//fmt.Printf("results = %v and len = %s and results[1] = %v \n", results, len(results), len(results[1])==0 )
+
+		if isEmpty(results[1]) {
+			//is the 2nd element of the array empty; if so, we likely didn't parse out a separater
+			//we likely have this, so we need to convert it
+			//current:
+			//	results[0] = markdown string
+			//	results[1] = empty
+			//need:
+			//	results[0] = "{}"
+			//	results[1] = markdown string
+			results[1] = results[0]
+			results[0] = "{}"
+		}
+		if len(results) == 2 {
+			//I have markdown but not json, so let's just make an empty json to process
+			if isEmpty(results[0]) {
+				results[0] = "{}"
+			}
+		}
+
+		//fmt.Printf("len = %s \n", len(results[0]))
+
+		dat, _ := parseJSON(results[0])
+		return dat, results[1], nil
 	} else {
-		return "", "", err
+		return nil, "", err
 	}
+}
+
+func parseJSON(jsonStr string) (map[string]interface{}, error) {
+	var dat map[string]interface{}
+	jsonBytes := []byte(jsonStr)
+	if err := json.Unmarshal(jsonBytes, &dat); err != nil {
+		return nil, err
+	}
+	return dat, nil
+}
+
+func isEmpty(s string) bool {
+	return len(s) == 0
 }
