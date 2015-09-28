@@ -158,17 +158,6 @@ func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 	return renderer, extensions
 }
 
-// func parseJSON(JSON string) (interface{}, error) {
-// 	var f interface{}
-// 	if err := json.Unmarshal([]byte(JSON), &f); err == nil {
-// 		//err := json.Unmarshal(b, &f)
-// 		log.Printf("%v \n", f)
-// 		return f, nil
-// 	} else {
-// 		return nil, err
-// 	}
-// }
-
 func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, error) {
 	var results [2]string
 	if str, err := ioutil.ReadFile(filename); err == nil {

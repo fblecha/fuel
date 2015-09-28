@@ -32,10 +32,7 @@ func TestNoSeparaterNoJson(t *testing.T) {
 		t.Error(err)
 	}
 	//there shouldn't be any items in the json map since we didn't have any json
-	//fmt.Printf("test len(jsonMap) = %s \n", len(jsonMap) )
-
-	//fmt.Printf("test markdown = %s \n", markdown)
-	if len(jsonMap) == 546 {
+	if len(jsonMap) == 546 {  //maybe a bit harsh, but I know that 546 is the right number for the airedale file
 		t.Fail()
 	}
 	if len(markdown) < 1 {
