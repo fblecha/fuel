@@ -27,7 +27,7 @@ func TestSeparaterButNoJson(t *testing.T) {
 }
 
 func TestNoSeparaterNoJson(t *testing.T) {
-	jsonMap, markdown, err := SplitJsonAndMarkdown("../example/content/dogs/airedale_terrier.haiku");
+	jsonMap, markdown, err := SplitJsonAndMarkdown("../example/content/dogs/airedale_terrier.haiku")
 	if err != nil {
 		t.Error(err)
 	}
