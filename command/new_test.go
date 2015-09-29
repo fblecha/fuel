@@ -46,9 +46,8 @@ func TestCreateNewProject(t *testing.T) {
   }
 
   //cleanup by removeing all the directories we created (hopefully)
-  for _, dir := range expectedDirs {
-    if err := os.RemoveAll(dir); err != nil {
-      t.Error(err)
-    }
+  dir := fmt.Sprintf("%s/runtest",  currentDir )
+  if err := os.RemoveAll(dir); err != nil {
+    t.Error(err)
   }
 }
