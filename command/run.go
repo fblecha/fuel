@@ -13,6 +13,7 @@ import (
 	"strings"
 	//"bufio"
 	"bytes"
+	"github.com/termie/go-shutil"
 	//"github.com/microcosm-cc/bluemonday"
 )
 
@@ -33,25 +34,31 @@ Generate the curent haiku blog in blog/public
 
 func (c *RunCommand) Run(args []string) int {
 	//TODO refactor this into a sequence of functions that are applied via a loop ?
-	if appDir, err := AreWeInProjectDir(); err == nil {
-		//create public dir
-		if err := createPublicDir(appDir); err != nil {
-			log.Fatal(err)
-			return 1
-		}
-
-		//render all content
-		if err := renderAllContent(appDir); err != nil {
-			log.Fatal(err)
-			return 1
-		}
-		//both of the commands worked, we're good to go
-		return 0
-	} else {
+	appDir, err := AreWeInProjectDir();
+	if err != nil {
 		log.Fatal(err)
 		return 1
 	}
+	//create public dir
+	if err := createPublicDir(appDir); err != nil {
+		log.Fatal(err)
+		return 1
+	}
+	//render all content
+	if err := renderAllContent(appDir); err != nil {
+		log.Fatal(err)
+		return 1
+	}
+
+	//copy the style directory over to /public
+	if err := copyStyleDirToPublic(appDir); err != nil {
+		log.Fatal(err)
+		return 1
+	}
+	//both of the commands worked, we're good to go
+	return 0
 }
+
 
 func (c *RunCommand) Synopsis() string {
 	return "process all the content to create a new Haiku blog"
@@ -207,4 +214,15 @@ func parseJSON(jsonStr string) (map[string]interface{}, error) {
 
 func isEmpty(s string) bool {
 	return len(s) == 0
+}
+
+func copyStyleDirToPublic(appDir string) error {
+	//first we have to remove the old /public/style directory
+	dest := fmt.Sprintf("%s/public/style",  appDir )
+  if err := os.RemoveAll(dest); err != nil {
+    return err
+  }
+	//now we copy over the new /style directory
+	src := fmt.Sprintf("%s/style", appDir)
+	return shutil.CopyTree(src, dest, nil)
 }

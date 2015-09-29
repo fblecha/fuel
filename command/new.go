@@ -50,7 +50,7 @@ func createChildDirs(appDir string) {
 	childDirs := [...]haikuDir{
 		{appDir, "content"}, //the primary app location -- most new code will go in here
 		{appDir, "config"},  //central source for the app config
-		{appDir, "style"},  //everything under style will be copied over to /public/style
+		//the style directory is created by the CopyTree func in run and not here.  CopyTree requires the dest dir not exist 
 	}
 	for _, child := range childDirs {
 		if err := child.Create(); err != nil {
