@@ -52,13 +52,13 @@ func TestCopyStyleDirectory(t *testing.T) {
 		Name: "new",
 		Ui:   ui,
 	}
-	if err := os.Chdir("./runtest"); err != nil {
-		t.Error(err)
-	} else {
-		wd, _ := os.Getwd()
-		fmt.Printf("wd = %s \n",wd )
-	}
 	newCmd.Run(args)
+
+	wd, _ := os.Getwd()
+	testdir := fmt.Sprintf("%s/runtest", wd)
+	if err := os.Chdir(testdir); err != nil {
+		t.Error(err)
+	}
 
 	runCmd := RunCommand{
 		Name: "run",
@@ -70,8 +70,9 @@ func TestCopyStyleDirectory(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	styleDir := fmt.Sprintf("%s/style", currentDir)
 	//see if the contents from example/style all exist in example/public/style
-	if err := filepath.Walk(currentDir, WalkStyleDirectory); err != nil {
+	if err := filepath.Walk(styleDir, WalkStyleDirectory); err != nil {
 		t.Error(err)
 	}
 	CleanupRunTestDirectory(currentDir, t)
@@ -83,6 +84,7 @@ func WalkStyleDirectory(path string, info os.FileInfo, err error) error {
 	re := regexp.MustCompile("/runtest/style/")
 	//pull out whatever/style from the path; let the remaining be called relativeContentPath
 	relativeContentPath := re.ReplaceAll([]byte(path), []byte("/runtest/public/style/"))
+	fmt.Printf("path = %s \n relativeContentPath = %s \n", path, relativeContentPath)
 	//check for runtest/style/relativeContentPath; if not there return a new Error
 	if _, err := os.Lstat(string(relativeContentPath)); err != nil {
 		return err
