@@ -34,7 +34,7 @@ Generate the curent haiku blog in blog/public
 
 func (c *RunCommand) Run(args []string) int {
 	//TODO refactor this into a sequence of functions that are applied via a loop ?
-	appDir, err := AreWeInProjectDir();
+	appDir, err := AreWeInProjectDir()
 	if err != nil {
 		log.Fatal(err)
 		return 1
@@ -58,7 +58,6 @@ func (c *RunCommand) Run(args []string) int {
 	//both of the commands worked, we're good to go
 	return 0
 }
-
 
 func (c *RunCommand) Synopsis() string {
 	return "process all the content to create a new Haiku blog"
@@ -218,10 +217,10 @@ func isEmpty(s string) bool {
 
 func copyStyleDirToPublic(appDir string) error {
 	//first we have to remove the old /public/style directory
-	dest := fmt.Sprintf("%s/public/style",  appDir )
-  if err := os.RemoveAll(dest); err != nil {
-    return err
-  }
+	dest := fmt.Sprintf("%s/public/style", appDir)
+	if err := os.RemoveAll(dest); err != nil {
+		return err
+	}
 	//now we copy over the new /style directory
 	src := fmt.Sprintf("%s/style", appDir)
 	return shutil.CopyTree(src, dest, nil)
