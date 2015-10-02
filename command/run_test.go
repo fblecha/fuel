@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"github.com/mitchellh/cli"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -50,15 +49,9 @@ func TestNoSeparaterNoJson(t *testing.T) {
 	}
 }
 
+
 func TestCopyStyleDirectory(t *testing.T) {
-	//use the haiku run command to make a new test blog
-	ui := &cli.BasicUi{Writer: os.Stdout}
-	args := []string{"runtest"}
-	newCmd := NewCommand{
-		Name: "new",
-		Ui:   ui,
-	}
-	newCmd.Run(args)
+	new()
 
 	wd, _ := os.Getwd()
 	testdir := fmt.Sprintf("%s/runtest", wd)
@@ -66,11 +59,7 @@ func TestCopyStyleDirectory(t *testing.T) {
 		t.Error(err)
 	}
 
-	runCmd := RunCommand{
-		Name: "run",
-		Ui:   ui,
-	}
-	runCmd.Run(args)
+	run()
 
 	currentDir, err := os.Getwd()
 	if err != nil {
@@ -81,7 +70,7 @@ func TestCopyStyleDirectory(t *testing.T) {
 	if err := filepath.Walk(styleDir, WalkStyleDirectory); err != nil {
 		t.Error(err)
 	}
-	CleanupRunTestDirectory(currentDir, t)
+	cleanup(currentDir, t)
 }
 
 func WalkStyleDirectory(path string, info os.FileInfo, err error) error {
@@ -96,14 +85,6 @@ func WalkStyleDirectory(path string, info os.FileInfo, err error) error {
 		return err
 	}
 	return nil
-}
-
-func CleanupRunTestDirectory(currentDir string, t *testing.T) {
-	//cleanup by removeing all the directories we created (hopefully)
-	dir := fmt.Sprintf("%s/runtest", currentDir)
-	if err := os.RemoveAll(dir); err != nil {
-		t.Error(err)
-	}
 }
 
 func TestTemplateParseAndInsertBasic(t *testing.T) {

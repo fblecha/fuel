@@ -2,23 +2,13 @@ package command
 
 import (
 	"fmt"
-	"github.com/mitchellh/cli"
+	//"github.com/mitchellh/cli"
 	"os"
 	"testing"
 )
 
 func TestCreateNewProject(t *testing.T) {
-	//use the haiku run command to make a new test blog
-	ui := &cli.BasicUi{Writer: os.Stdout}
-	cmd := NewCommand{
-		Name: "new",
-		Ui:   ui,
-	}
-
-	args := []string{
-		"runtest",
-	}
-	cmd.Run(args)
+	new()
 	//test to see if these directories exist
 	// runtest/config
 	// runtest/content
@@ -43,5 +33,5 @@ func TestCreateNewProject(t *testing.T) {
 			t.Error(err)
 		}
 	}
-	CleanupRunTestDirectory(currentDir, t)
+	cleanup(currentDir, t)
 }
