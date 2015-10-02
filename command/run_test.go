@@ -6,8 +6,14 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 )
+
+func TestHelp(t *testing.T) {
+
+}
+
 
 func TestSplitJsonAndMarkdown(t *testing.T) {
 	if jsonMap, _, err := SplitJsonAndMarkdown("../example/content/dogs/labrador_retriever.haiku"); err != nil {
@@ -97,5 +103,29 @@ func CleanupRunTestDirectory(currentDir string, t *testing.T) {
 	dir := fmt.Sprintf("%s/runtest", currentDir)
 	if err := os.RemoveAll(dir); err != nil {
 		t.Error(err)
+	}
+}
+
+func TestTemplateParseAndInsertBasic(t *testing.T) {
+	content := "Winter"
+	htmlTemplate := `
+<html>
+<head>
+</head>
+<body>
+{{ .Content }} is coming
+</body>
+</html>
+`
+	result, err := ParseAndInsert(content, htmlTemplate)
+	if err != nil {
+		t.Error(err)
+	}
+	//re := regexp.MustCompile( content )
+	fmt.Printf("result = %s \n Contains = %s \n", result, strings.Contains(result,content) )
+
+	if !strings.Contains(result, content) { //!re.Match([]byte(result)) {
+
+		t.Fatal("result did not contain expected content")
 	}
 }

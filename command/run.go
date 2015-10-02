@@ -14,6 +14,7 @@ import (
 	//"bufio"
 	"bytes"
 	"github.com/termie/go-shutil"
+	"html/template"
 	//"github.com/microcosm-cc/bluemonday"
 )
 
@@ -224,4 +225,23 @@ func copyStyleDirToPublic(appDir string) error {
 	//now we copy over the new /style directory
 	src := fmt.Sprintf("%s/style", appDir)
 	return shutil.CopyTree(src, dest, nil)
+}
+
+func ParseAndInsert(content string, htmlTemplate string) (string, error) {
+  var data = make(map[string]interface{})
+	data["Content"] = content
+
+	t := template.New("t")
+  t, err := t.Parse(htmlTemplate)
+  if err != nil {
+    return "", err
+  }
+
+	var b bytes.Buffer
+
+  err = t.Execute( &b, data)
+	if err != nil {
+    return "", err
+  }
+	return b.String(), nil
 }
