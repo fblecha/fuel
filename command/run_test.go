@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"github.com/mitchellh/cli"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -22,15 +23,17 @@ func TestRunHelp(t *testing.T) {
 }
 
 func TestRunSynopsis(t *testing.T) {
-	new()
-	cdRuntest(t)
-	cmd := run()
-	text := cmd.Synopsis()
+	ui := &cli.BasicUi{Writer: os.Stdout}
+	//args := []string{""}
+	cmd := RunCommand{
+		Name: "run",
+		Ui:   ui,
+	}
+	text := cmd.Help()
 	if len(text) < 1 {
 		t.Fail()
 	}
-	cdBack(t)
-	cleanup(t)
+
 }
 
 func TestSplitJsonAndMarkdown(t *testing.T) {
