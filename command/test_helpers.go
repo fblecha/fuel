@@ -1,14 +1,13 @@
 package command
 
 import (
-  "os"
+	"fmt"
 	"github.com/mitchellh/cli"
-  "testing"
-  "fmt"
+	"os"
+	"testing"
 )
 
-
-func run() {
+func run() RunCommand {
 	ui := &cli.BasicUi{Writer: os.Stdout}
 	args := []string{""}
 	runCmd := RunCommand{
@@ -16,9 +15,10 @@ func run() {
 		Ui:   ui,
 	}
 	runCmd.Run(args)
+	return runCmd
 }
 
-func new() {
+func new() NewCommand {
 	//use the haiku run command to make a new test blog
 	ui := &cli.BasicUi{Writer: os.Stdout}
 	args := []string{"runtest"}
@@ -27,12 +27,30 @@ func new() {
 		Ui:   ui,
 	}
 	newCmd.Run(args)
+	return newCmd
 }
 
-func cleanup(currentDir string, t *testing.T) {
+func cleanup(t *testing.T) {
+	currentDir, _ := os.Getwd()
 	//cleanup by removeing all the directories we created (hopefully)
 	dir := fmt.Sprintf("%s/runtest", currentDir)
 	if err := os.RemoveAll(dir); err != nil {
+		t.Error(err)
+	}
+}
+
+func cdRuntest(t *testing.T) {
+	wd, _ := os.Getwd()
+	testdir := fmt.Sprintf("%s/runtest", wd)
+	if err := os.Chdir(testdir); err != nil {
+		t.Error(err)
+	}
+}
+
+func cdBack(t *testing.T) {
+	wd, _ := os.Getwd()
+	testdir := fmt.Sprintf("%s/..", wd)
+	if err := os.Chdir(testdir); err != nil {
 		t.Error(err)
 	}
 }

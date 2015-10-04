@@ -228,20 +228,20 @@ func copyStyleDirToPublic(appDir string) error {
 }
 
 func ParseAndInsert(content string, htmlTemplate string) (string, error) {
-  var data = make(map[string]interface{})
+	var data = make(map[string]interface{})
 	data["Content"] = content
 
 	t := template.New("t")
-  t, err := t.Parse(htmlTemplate)
-  if err != nil {
-    return "", err
-  }
+	t, err := t.Parse(htmlTemplate)
+	if err != nil {
+		return "", err
+	}
 
 	var b bytes.Buffer
 
-  err = t.Execute( &b, data)
+	err = t.Execute(&b, data)
 	if err != nil {
-    return "", err
-  }
+		return "", err
+	}
 	return b.String(), nil
 }

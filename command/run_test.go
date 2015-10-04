@@ -9,10 +9,29 @@ import (
 	"testing"
 )
 
-func TestHelp(t *testing.T) {
-
+func TestRunHelp(t *testing.T) {
+	new()
+	cdRuntest(t)
+	cmd := run()
+	text := cmd.Help()
+	if len(text) < 1 {
+		t.Fail()
+	}
+	cdBack(t)
+	cleanup(t)
 }
 
+func TestRunSynopsis(t *testing.T) {
+	new()
+	cdRuntest(t)
+	cmd := run()
+	text := cmd.Synopsis()
+	if len(text) < 1 {
+		t.Fail()
+	}
+	cdBack(t)
+	cleanup(t)
+}
 
 func TestSplitJsonAndMarkdown(t *testing.T) {
 	if jsonMap, _, err := SplitJsonAndMarkdown("../example/content/dogs/labrador_retriever.haiku"); err != nil {
@@ -49,16 +68,9 @@ func TestNoSeparaterNoJson(t *testing.T) {
 	}
 }
 
-
 func TestCopyStyleDirectory(t *testing.T) {
 	new()
-
-	wd, _ := os.Getwd()
-	testdir := fmt.Sprintf("%s/runtest", wd)
-	if err := os.Chdir(testdir); err != nil {
-		t.Error(err)
-	}
-
+	cdRuntest(t)
 	run()
 
 	currentDir, err := os.Getwd()
@@ -70,7 +82,7 @@ func TestCopyStyleDirectory(t *testing.T) {
 	if err := filepath.Walk(styleDir, WalkStyleDirectory); err != nil {
 		t.Error(err)
 	}
-	cleanup(currentDir, t)
+	cleanup(t)
 }
 
 func WalkStyleDirectory(path string, info os.FileInfo, err error) error {
@@ -103,7 +115,7 @@ func TestTemplateParseAndInsertBasic(t *testing.T) {
 		t.Error(err)
 	}
 	//re := regexp.MustCompile( content )
-	fmt.Printf("result = %s \n Contains = %s \n", result, strings.Contains(result,content) )
+	fmt.Printf("result = %s \n Contains = %s \n", result, strings.Contains(result, content))
 
 	if !strings.Contains(result, content) { //!re.Match([]byte(result)) {
 

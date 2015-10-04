@@ -40,17 +40,14 @@ Generate a new Haiku blog
 func createAppRootDir(name string) error {
 	log.Printf("app root dir = %v\n", name)
 	//mode := int(0777)
-	if err := os.MkdirAll(name, 0777); err != nil {
-		panic(err)
-	}
-	return nil
+	return os.MkdirAll(name, 0777)
 }
 
 func createChildDirs(appDir string) {
 	childDirs := [...]haikuDir{
 		{appDir, "content"}, //the primary app location -- most new code will go in here
 		{appDir, "config"},  //central source for the app config
-		{appDir, "style"},  //central source for the app config
+		{appDir, "style"},   //central source for the app config
 	}
 	for _, child := range childDirs {
 		if err := child.Create(); err != nil {

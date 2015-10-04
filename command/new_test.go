@@ -7,6 +7,24 @@ import (
 	"testing"
 )
 
+func TestNewHelp(t *testing.T) {
+	cmd := new()
+	text := cmd.Help()
+	if len(text) < 1 {
+		t.Fail()
+	}
+	cleanup(t)
+}
+
+func TestNewSynopsis(t *testing.T) {
+	cmd := new()
+	text := cmd.Synopsis()
+	if len(text) < 1 {
+		t.Fail()
+	}
+	cleanup(t)
+}
+
 func TestCreateNewProject(t *testing.T) {
 	new()
 	//test to see if these directories exist
@@ -33,5 +51,5 @@ func TestCreateNewProject(t *testing.T) {
 			t.Error(err)
 		}
 	}
-	cleanup(currentDir, t)
+	cleanup(t)
 }
