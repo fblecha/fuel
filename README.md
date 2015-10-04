@@ -1,16 +1,15 @@
-[![Build Status](https://drone.io/github.com/fblecha/haiku/status.png)](https://drone.io/github.com/fblecha/haiku/latest)
-[![GoDoc](https://godoc.org/github.com/fblecha/haiku?status.svg)](https://godoc.org/github.com/fblecha/haiku)
-[![Coverage Status](https://coveralls.io/repos/fblecha/haiku/badge.svg?branch=master&service=github)](https://coveralls.io/github/fblecha/haiku?branch=master)
+[![Build Status](https://drone.io/github.com/fblecha/fuel/status.png)](https://drone.io/github.com/fblecha/fuel/latest)
+[![GoDoc](https://godoc.org/github.com/fblecha/fuel?status.svg)](https://godoc.org/github.com/fblecha/fuel)
 
 
 WIP - do not use until there's a release
 
-# haiku
+# fuel
 A static blog that can also persist data to a database.
 
 # Purpose
 
-I wanted to create a series of content that would be available by both an API and via a static website, and I didn't want to use wordpress.  Haiku will do two major things:
+I wanted to create a series of content that would be available by both an API and via a static website, and I didn't want to use wordpress.  fuel will do two major things:
 1. produce a static website
 2. for each type of content, persist both the data and metadata into a database
 
@@ -24,7 +23,7 @@ I wanted to create a series of content that would be available by both an API an
 
 # How does it work?
 
-Given a .haiku file, like this:
+Given a .fuel file, like this:
 
 ```markdown
 {

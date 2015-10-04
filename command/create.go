@@ -16,14 +16,14 @@ type CreateCommand struct {
 
 func (c *CreateCommand) Help() string {
 	helpText := `
-Usage: haiku create path/name
+Usage: fuel create path/name
 
-Generate a haiku file for name at path.  E.g.
+Generate a fuel file for name at path.  E.g.
 
 $ cd ~/my_train_site
-$ haiku create trains/e-line
+$ fuel create trains/e-line
 
-will create the file /Users/fb3/my_train_site/trains/e-line.haiku
+will create the file /Users/fb3/my_train_site/trains/e-line.fuel
 
 `
 	return strings.TrimSpace(helpText)
@@ -49,12 +49,12 @@ func (c *CreateCommand) Run(args []string) int {
 }
 
 func (c *CreateCommand) Synopsis() string {
-	return "creates a new haiku"
+	return "creates a new fuel"
 }
 
 func createContent(appDir string, path string, contentName string) error {
 	contentDir := fmt.Sprintf("%s/content/%s", appDir, path)
-	filePath := fmt.Sprintf("%s/%s.haiku", contentDir, contentName)
+	filePath := fmt.Sprintf("%s/%s.fuel", contentDir, contentName)
 	fmt.Printf("Creating %s \n", filePath)
 	//make contentDir
 	os.MkdirAll(contentDir, 0777)

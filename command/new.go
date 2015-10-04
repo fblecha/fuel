@@ -14,12 +14,12 @@ type NewCommand struct {
 	Ui   cli.Ui
 }
 
-type haikuDir struct {
-	RootDir string //root dir absolute path e.g. /Users/fb3/code/haiku_blog
+type fuelDir struct {
+	RootDir string //root dir absolute path e.g. /Users/fb3/code/fuel_blog
 	DirName string //relative name to RootDir, e.g. app, test, config
 }
 
-func (d *haikuDir) Create() error {
+func (d *fuelDir) Create() error {
 	newDir := fmt.Sprintf("%v/%v", d.RootDir, d.DirName)
 	log.Printf("creating %v \n", newDir)
 	return os.MkdirAll(newDir, 0777)
@@ -27,9 +27,9 @@ func (d *haikuDir) Create() error {
 
 func (c *NewCommand) Help() string {
 	helpText := `
-Usage: haiku new blogname
+Usage: fuel new blogname
 
-Generate a new Haiku blog
+Generate a new Fuel blog
 
 `
 	return strings.TrimSpace(helpText)
@@ -44,7 +44,7 @@ func createAppRootDir(name string) error {
 }
 
 func createChildDirs(appDir string) {
-	childDirs := [...]haikuDir{
+	childDirs := [...]fuelDir{
 		{appDir, "content"}, //the primary app location -- most new code will go in here
 		{appDir, "config"},  //central source for the app config
 		{appDir, "style"},   //central source for the app config
@@ -80,5 +80,5 @@ func (c *NewCommand) Run(args []string) int {
 }
 
 func (c *NewCommand) Synopsis() string {
-	return "creates a new Haiku app"
+	return "creates a new Fuel app"
 }
