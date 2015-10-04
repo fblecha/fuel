@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 	//"fmt"
-	"github.com/fblecha/haiku/command"
+	"github.com/fblecha/fuel/command"
 	"github.com/mitchellh/cli"
 )
 

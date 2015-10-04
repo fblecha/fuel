@@ -2,7 +2,7 @@
 package main
 
 import (
-	"github.com/fblecha/haiku/command"
+	"github.com/fblecha/fuel/command"
 	"github.com/mitchellh/cli"
 	"log"
 	"os"
