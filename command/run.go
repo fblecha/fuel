@@ -191,8 +191,6 @@ func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, erro
 			}
 		}
 
-		//fmt.Printf("len = %s \n", len(results[0]))
-
 		dat, _ := parseJSON(results[0])
 		return dat, results[1], nil
 	} else {

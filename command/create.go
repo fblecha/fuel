@@ -23,7 +23,7 @@ Generate a fuel file for name at path.  E.g.
 $ cd ~/my_train_site
 $ fuel create trains/e-line
 
-will create the file /Users/fb3/my_train_site/trains/e-line.fuel
+will create the file /Users/fb3/my_train_site/trains/e-line.md
 
 `
 	return strings.TrimSpace(helpText)

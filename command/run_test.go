@@ -37,7 +37,7 @@ func TestRunSynopsis(t *testing.T) {
 }
 
 func TestSplitJsonAndMarkdown(t *testing.T) {
-	if jsonMap, _, err := SplitJsonAndMarkdown("../example/content/dogs/labrador_retriever.fuel"); err != nil {
+	if jsonMap, _, err := SplitJsonAndMarkdown("../example/content/dogs/labrador_retriever.md"); err != nil {
 		t.Error(err)
 	} else {
 		if jsonMap["breed"] != "Labrador Retriever" {
@@ -47,7 +47,7 @@ func TestSplitJsonAndMarkdown(t *testing.T) {
 }
 
 func TestSeparaterButNoJson(t *testing.T) {
-	jsonMap, _, err := SplitJsonAndMarkdown("../example/content/dogs/jack_russel_terrier.fuel")
+	jsonMap, _, err := SplitJsonAndMarkdown("../example/content/dogs/jack_russel_terrier.md")
 	if err != nil {
 		t.Error(err)
 	}
@@ -58,7 +58,7 @@ func TestSeparaterButNoJson(t *testing.T) {
 }
 
 func TestNoSeparaterNoJson(t *testing.T) {
-	jsonMap, markdown, err := SplitJsonAndMarkdown("../example/content/dogs/airedale_terrier.fuel")
+	jsonMap, markdown, err := SplitJsonAndMarkdown("../example/content/dogs/airedale_terrier.md")
 	if err != nil {
 		t.Error(err)
 	}
