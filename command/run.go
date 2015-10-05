@@ -201,14 +201,8 @@ func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, erro
 func parseJSON(jsonStr string) (map[string]interface{}, error) {
 	var dat map[string]interface{}
 	jsonBytes := []byte(jsonStr)
-	if err := json.Unmarshal(jsonBytes, &dat); err != nil {
-		return nil, err
-	}
-	return dat, nil
-}
-
-func isEmpty(s string) bool {
-	return len(s) == 0
+	err := json.Unmarshal(jsonBytes, &dat);
+	return dat, err
 }
 
 func copyStyleDirToPublic(appDir string) error {
