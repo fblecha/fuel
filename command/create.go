@@ -49,12 +49,12 @@ func (c *CreateCommand) Run(args []string) int {
 }
 
 func (c *CreateCommand) Synopsis() string {
-	return "creates a new fuel"
+	return "creates a new markdown file"
 }
 
 func createContent(appDir string, path string, contentName string) error {
 	contentDir := fmt.Sprintf("%s/content/%s", appDir, path)
-	filePath := fmt.Sprintf("%s/%s.fuel", contentDir, contentName)
+	filePath := fmt.Sprintf("%s/%s.%s", contentDir, contentName, EXT)
 	fmt.Printf("Creating %s \n", filePath)
 	//make contentDir
 	os.MkdirAll(contentDir, 0777)

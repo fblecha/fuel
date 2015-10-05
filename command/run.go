@@ -50,7 +50,6 @@ func (c *RunCommand) Run(args []string) int {
 		log.Fatal(err)
 		return 1
 	}
-
 	//copy the style directory over to /public
 	if err := copyStyleDirToPublic(appDir); err != nil {
 		log.Fatal(err)
@@ -69,13 +68,9 @@ func createPublicDir(appDir string) error {
 	return os.MkdirAll(publicDir, 0777)
 }
 
-func renderfuel(path string) error {
+func renderFuel(path string) error {
 
 	if appDir, err := AreWeInProjectDir(); err == nil {
-		//if input, err := ioutil.ReadFile(path); err == nil {
-		//if _, err := ioutil.ReadFile(path); err == nil {
-
-		//jsonStr, markdownStr, err := splitJsonAndMarkdown(path)
 		if jsonMap, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
 			storeJSON(jsonMap)
 			renderMarkdown(appDir, path, markdownStr)
@@ -105,7 +100,7 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 		// blah.fuel to blah.html
 		tmpPath := fmt.Sprintf("%s/public/%s", appDir, oldPath)
 		//convert from .fuel to .html
-		newDir, newPath := convertFromfuelToHTML(tmpPath)
+		newDir, newPath := convertFromFuelToHTML(tmpPath)
 		//make the new dir in public
 		os.MkdirAll(newDir, 0777)
 		//output is a []byte -- write it to a file
@@ -121,7 +116,7 @@ func getFilenameMinusExtension(path string) string {
 	return newFilename
 }
 
-func convertFromfuelToHTML(tmpPath string) (string, string) {
+func convertFromFuelToHTML(tmpPath string) (string, string) {
 	newFilename := getFilenameMinusExtension(tmpPath)
 	//finally make the new dir and the new path (for the file to be created
 	newDir := filepath.Dir(tmpPath)
@@ -131,8 +126,8 @@ func convertFromfuelToHTML(tmpPath string) (string, string) {
 
 func walkpath(path string, f os.FileInfo, err error) error {
 	switch filepath.Ext(path) {
-	case ".fuel":
-		renderfuel(path)
+	case EXT:
+		return renderFuel(path)
 	}
 	return nil
 }
