@@ -8,18 +8,18 @@ import (
 )
 
 func appErrorMessage() error {
-	currentDir, _ := os.Getwd()
+	currentDir, _ := os.Getwd()	
 	return fmt.Errorf(`
-Hi there!  You likely wanted to execute this command in a haiku project directory.
+Hi there!  You likely wanted to execute this command in a fuel project directory.
 For example, if you ran:
 
 $ cd ~/website
-$ haiku new blog
+$ fuel new blog
 
-then ~/website/blog is your haiku project dir.  It'll have a haiku/content haiku/config,
-and the rest of the haiku generated files.
+then ~/website/blog is your fuel project dir.  It'll have a fuel/content fuel/config,
+and the rest of the fuel generated files.
 
-This time you ran haiku in %v
+This time you ran fuel in %v
 `, currentDir)
 }
 

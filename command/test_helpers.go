@@ -19,7 +19,7 @@ func run() RunCommand {
 }
 
 func new() NewCommand {
-	//use the haiku run command to make a new test blog
+	//use the fuel run command to make a new test blog
 	ui := &cli.BasicUi{Writer: os.Stdout}
 	args := []string{"runtest"}
 	newCmd := NewCommand{

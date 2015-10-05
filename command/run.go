@@ -25,9 +25,9 @@ type RunCommand struct {
 
 func (c *RunCommand) Help() string {
 	helpText := `
-Usage: haiku run
+Usage: fuel run
 
-Generate the curent haiku blog in blog/public
+Generate the curent fuel blog in blog/public
 
 `
 	return strings.TrimSpace(helpText)
@@ -61,7 +61,7 @@ func (c *RunCommand) Run(args []string) int {
 }
 
 func (c *RunCommand) Synopsis() string {
-	return "process all the content to create a new Haiku blog"
+	return "process all the content to create a new fuel blog"
 }
 
 func createPublicDir(appDir string) error {
@@ -69,7 +69,7 @@ func createPublicDir(appDir string) error {
 	return os.MkdirAll(publicDir, 0777)
 }
 
-func renderHaiku(path string) error {
+func renderfuel(path string) error {
 
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		//if input, err := ioutil.ReadFile(path); err == nil {
@@ -102,10 +102,10 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 	if matches := re.FindStringSubmatch(path); matches != nil && len(matches) == 2 {
 		oldPath := matches[1]
 		//tmpPath is the expected location before some manipulation around the filename, e.g. convert
-		// blah.haiku to blah.html
+		// blah.fuel to blah.html
 		tmpPath := fmt.Sprintf("%s/public/%s", appDir, oldPath)
-		//convert from .haiku to .html
-		newDir, newPath := convertFromHaikuToHTML(tmpPath)
+		//convert from .fuel to .html
+		newDir, newPath := convertFromfuelToHTML(tmpPath)
 		//make the new dir in public
 		os.MkdirAll(newDir, 0777)
 		//output is a []byte -- write it to a file
@@ -121,7 +121,7 @@ func getFilenameMinusExtension(path string) string {
 	return newFilename
 }
 
-func convertFromHaikuToHTML(tmpPath string) (string, string) {
+func convertFromfuelToHTML(tmpPath string) (string, string) {
 	newFilename := getFilenameMinusExtension(tmpPath)
 	//finally make the new dir and the new path (for the file to be created
 	newDir := filepath.Dir(tmpPath)
@@ -131,8 +131,8 @@ func convertFromHaikuToHTML(tmpPath string) (string, string) {
 
 func walkpath(path string, f os.FileInfo, err error) error {
 	switch filepath.Ext(path) {
-	case ".haiku":
-		renderHaiku(path)
+	case ".fuel":
+		renderfuel(path)
 	}
 	return nil
 }
