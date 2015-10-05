@@ -2,6 +2,9 @@ package command
 
 import (
 	"encoding/json"
+	"path/filepath"
+	"strings"
+
 )
 
 func isEmpty(s string) bool {
@@ -13,4 +16,11 @@ func parseJSON(jsonStr string) (map[string]interface{}, error) {
 	jsonBytes := []byte(jsonStr)
 	err := json.Unmarshal(jsonBytes, &dat);
 	return dat, err
+}
+
+func getFilenameMinusExtension(path string) string {
+	filename := filepath.Base(path)
+	extensionIndex := strings.LastIndex(filename, ".")
+	newFilename := filename[0:extensionIndex]
+	return newFilename
 }

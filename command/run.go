@@ -108,12 +108,6 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 	}
 }
 
-func getFilenameMinusExtension(path string) string {
-	filename := filepath.Base(path)
-	extensionIndex := strings.LastIndex(filename, ".")
-	newFilename := filename[0:extensionIndex]
-	return newFilename
-}
 
 func convertFromFuelToHTML(tmpPath string) (string, string) {
 	newFilename := getFilenameMinusExtension(tmpPath)
