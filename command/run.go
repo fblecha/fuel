@@ -1,7 +1,6 @@
 package command
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/fblecha/blackfriday"
 	"github.com/mitchellh/cli"
@@ -198,12 +197,6 @@ func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, erro
 	}
 }
 
-func parseJSON(jsonStr string) (map[string]interface{}, error) {
-	var dat map[string]interface{}
-	jsonBytes := []byte(jsonStr)
-	err := json.Unmarshal(jsonBytes, &dat);
-	return dat, err
-}
 
 func copyStyleDirToPublic(appDir string) error {
 	//first we have to remove the old /public/style directory
