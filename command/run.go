@@ -171,14 +171,16 @@ func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, erro
 		//fmt.Printf("results = %v and len = %s and results[1] = %v \n", results, len(results), len(results[1])==0 )
 
 		if isEmpty(results[1]) {
-			//is the 2nd element of the array empty; if so, we likely didn't parse out a separater
-			//we likely have this, so we need to convert it
-			//current:
-			//	results[0] = markdown string
-			//	results[1] = empty
-			//need:
-			//	results[0] = "{}"
-			//	results[1] = markdown string
+			/*
+				Is the 2nd element of the array empty? If so, we likely didn't parse out a separater.
+			we likely have a situation like [current] (see below), so we need to convert it.
+			current:
+				results[0] = markdown string
+				results[1] = empty
+			need:
+				results[0] = "{}"
+				results[1] = markdown string
+			*/
 			results[1] = results[0]
 			results[0] = "{}"
 		}
