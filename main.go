@@ -1,4 +1,4 @@
-//haiku generates a static html site from a markdown dialect, while also putting metadata into a datastore.
+//fuel generates a static html site from a markdown dialect, while also putting metadata into a datastore.
 package main
 
 import (
@@ -17,7 +17,7 @@ func main() {
 	cli := &cli.CLI{
 		Args:     args,
 		Commands: Commands,
-		HelpFunc: cli.BasicHelpFunc("haiku"),
+		HelpFunc: cli.BasicHelpFunc("fuel"),
 	}
 
 	exitStatus, err := cli.Run()
