@@ -10,8 +10,7 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	var err error
-
+	
 	handleCommandOutsideOfProjectDir(args)
 
 	cli := &cli.CLI{
@@ -34,9 +33,7 @@ func handleCommandOutsideOfProjectDir(args []string) {
 		case "new":
 			//do nothing in the case of the "new" command
 		default:
-			if _, err := command.AreWeInProjectDir(); err == nil {
-				//otherwise, make sure we have the AppConfig setup
-			} else {
+			if _, err := command.AreWeInProjectDir(); err != nil {
 				log.Println(err)
 			}
 		}
