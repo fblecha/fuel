@@ -10,7 +10,7 @@ import (
 
 func main() {
 	args := os.Args[1:]
-	
+
 	handleCommandOutsideOfProjectDir(args)
 
 	cli := &cli.CLI{

@@ -1,6 +1,7 @@
 package command
 
 import (
+	"errors"
 	"fmt"
 	"github.com/fblecha/blackfriday"
 	"github.com/mitchellh/cli"
@@ -73,6 +74,9 @@ func renderFuel(path string) error {
 		if jsonMap, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
 			storeJSON(jsonMap)
 			renderMarkdown(appDir, path, markdownStr)
+
+			//result, err := ParseAndInsert(content, htmlTemplate)
+
 		} else {
 			return err
 		}
@@ -87,9 +91,56 @@ func storeJSON(json map[string]interface{}) error {
 	return nil
 }
 
+func loadHTML(appDir string, path string) (string, error) {
+	//given that path is in ./public/something/maybe/content.md
+
+	//do most exact matching to least exact matching
+	// if we have ./views/blah/foo/bar/greenfrog.md
+	// we'd try ./views/blah/foo/bar/greenfrog.layout.html
+	// then ./views/blah/foo/bar/layout.html
+	// then ./views/blah/foo/layout.html
+	// then ./views/blah/layout.html
+	// then ./views/layout.html
+
+	//first need to make it relative
+	relativePath, err := GetRelativePath(appDir, path)
+	if err != nil {
+		return "", err
+	}
+	dirs := PathToDirs(relativePath)         //gives back most general to most specific
+	dirs = Reverse(dirs)                     //now in most specific to general order
+	targets := addContentTargetsToDirs(dirs) //now each dir has a target of something/layout.html
+	targets = addMostSpecificLayout(dirs)    // plus we add a something/blah.layout.html in as well
+	target, err := findBestMatch(targets)
+	if err != nil {
+		return "", err
+	}
+	//target is a form of layout.html file that we'll use as the template
+
+	//load taret as a string and return it
+	result, err2 := LoadFileAsString(target)
+	return result, err2
+}
+
+func addContentTargetsToDirs(dirs []string) []string {
+	return []string{"blah"}
+}
+func addMostSpecificLayout(dirs []string) []string {
+	return []string{"blah"}
+}
+func findBestMatch(targets []string) (string, error) {
+	return "", errors.New("not implemented")
+}
+
 func renderMarkdown(appDir string, path string, markdownContent string) {
 	renderer, extensions := configureBlackFriday(path)
 	html := blackfriday.Markdown([]byte(markdownContent), renderer, extensions)
+
+	template, _ := loadHTML(appDir, path)
+
+	//result, _ := ParseAndInsert(string(html), template)
+	ParseAndInsert(string(html), template)
+
 	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	re := regexp.MustCompile("/content/(.+)")
@@ -107,7 +158,6 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 		ioutil.WriteFile(newPath, html, 0644)
 	}
 }
-
 
 func convertFromFuelToHTML(tmpPath string) (string, string) {
 	newFilename := getFilenameMinusExtension(tmpPath)
@@ -165,14 +215,14 @@ func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, erro
 
 		if isEmpty(results[1]) {
 			/*
-				Is the 2nd element of the array empty? If so, we likely didn't parse out a separater.
-			we likely have a situation like [current] (see below), so we need to convert it.
-			current:
-				results[0] = markdown string
-				results[1] = empty
-			need:
-				results[0] = "{}"
-				results[1] = markdown string
+					Is the 2nd element of the array empty? If so, we likely didn't parse out a separater.
+				we likely have a situation like [current] (see below), so we need to convert it.
+				current:
+					results[0] = markdown string
+					results[1] = empty
+				need:
+					results[0] = "{}"
+					results[1] = markdown string
 			*/
 			results[1] = results[0]
 			results[0] = "{}"
@@ -190,7 +240,6 @@ func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, erro
 		return nil, "", err
 	}
 }
-
 
 func copyStyleDirToPublic(appDir string) error {
 	//first we have to remove the old /public/style directory

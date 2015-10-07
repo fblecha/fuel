@@ -8,7 +8,7 @@ import (
 )
 
 func appErrorMessage() error {
-	currentDir, _ := os.Getwd()	
+	currentDir, _ := os.Getwd()
 	return fmt.Errorf(`
 Hi there!  You likely wanted to execute this command in a fuel project directory.
 For example, if you ran:
