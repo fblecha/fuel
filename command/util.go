@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"path/filepath"
-	//"sort"
 	"strings"
 )
 
@@ -30,18 +29,19 @@ func GetRelativePath(appDir string, path string) (string, error) {
 	return "", errors.New("blah")
 }
 
-func PathToDirs(relativePath string) []string {
-	blah := []string{"blah"}
-	return blah
+func PathToDirs(path string) []string {
+
+	return strings.Split(path, "/")
 }
 
 func Reverse(things []string) []string {
-//	return []string(sort.Reverse(sort.StringSlice(things)))
+	//TODO need to figure this out when I'm not on the train
+	//	return []string(sort.Reverse(sort.StringSlice(things)))
 
 	// //TODO more efficient way to do this
-	newThings := make([]string, len(things) )
+	newThings := make([]string, len(things))
 	for i := range things {
-		j := len(things)-i
+		j := len(things) - i - 1
 		newThings[i] = things[j]
 	}
 	return newThings
