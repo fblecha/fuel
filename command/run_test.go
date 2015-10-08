@@ -5,6 +5,7 @@ import (
 	"github.com/mitchellh/cli"
 	"os"
 	"path/filepath"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -123,5 +124,21 @@ func TestTemplateParseAndInsertBasic(t *testing.T) {
 	if !strings.Contains(result, content) { //!re.Match([]byte(result)) {
 
 		t.Fatal("result did not contain expected content")
+	}
+}
+
+type AddContentTargetsTest struct {
+	dirs     []string
+	expected []string
+}
+
+func TestAddContentTargetsToDirs(t *testing.T) {
+	tests := []AddContentTargetsTest{
+		{[]string{"a", "a/b"}, []string{"a/layout.html", "a/b/layout.html"}},
+	}
+	for _, test := range tests {
+		if actual := addContentTargetsToDirs(test.dirs); !reflect.DeepEqual(actual, test.expected) {
+			t.Errorf("addContentTargetsToDirs(%#q) = %#q, want %#q", test.dirs, actual, test.expected)
+		}
 	}
 }

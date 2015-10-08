@@ -123,7 +123,11 @@ func loadHTML(appDir string, path string) (string, error) {
 }
 
 func addContentTargetsToDirs(dirs []string) []string {
-	return []string{"blah"}
+	results := make([]string, len(dirs))
+	for i := range dirs {
+		results[i] = fmt.Sprintf("%s/layout.html", dirs[i])
+	}
+	return results
 }
 func addMostSpecificLayout(dirs []string) []string {
 	return []string{"blah"}

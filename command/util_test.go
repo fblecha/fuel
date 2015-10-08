@@ -1,11 +1,11 @@
 package command
 
 import (
-	"testing"
-	//"fmt"
+	"fmt"
 	"path/filepath"
 	"reflect"
-	"strings"
+	"testing"
+	//"strings"
 )
 
 func TestReverse(t *testing.T) {
@@ -16,11 +16,13 @@ func TestReverse(t *testing.T) {
 }
 
 func TestPathToDirs(t *testing.T) {
-	//path := "blah/foo/bar/monkey.md"
+	path := "blah/foo/bar/monkey.md"
+	results := PathToDirs(path)
+	fmt.Printf("results test = %v \n", results)
 	const lsep = filepath.ListSeparator
 	//path := string([]byte{'a', lsep, 'b'})
-	path := "a/b"
-	if dirs := strings.Split(path, "/"); !reflect.DeepEqual(dirs, []string{"a", "b"}) {
-		t.Fatalf("dirs did not equal expected result")
-	}
+	// path := "a/b"
+	// if dirs := strings.Split(path, "/"); !reflect.DeepEqual(dirs, []string{"a", "b"}) {
+	// 	t.Fatalf("dirs did not equal expected result")
+	// }
 }

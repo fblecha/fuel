@@ -3,6 +3,7 @@ package command
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 )
@@ -30,8 +31,19 @@ func GetRelativePath(appDir string, path string) (string, error) {
 }
 
 func PathToDirs(path string) []string {
+	//TODO fairly sure this isn't robust yet
+	components := strings.Split(filepath.Dir(path), "/")
+	var results []string
+	results = append(results, components[0])
+	for i, _ := range components {
+		if i == 0 {
 
-	return strings.Split(path, "/")
+		} else {
+			results = append(results, fmt.Sprintf("%s/%s", results[i-1], components[i]))
+		}
+	}
+	fmt.Printf("results = %v \n", results)
+	return results
 }
 
 func Reverse(things []string) []string {
