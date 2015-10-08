@@ -11,6 +11,12 @@ import (
 	"testing"
 )
 
+type AddContentTargetsTest struct {
+	dirs     []string
+	expected []string
+}
+
+
 func TestRunHelp(t *testing.T) {
 	new()
 	cdRuntest(t)
@@ -125,11 +131,6 @@ func TestTemplateParseAndInsertBasic(t *testing.T) {
 
 		t.Fatal("result did not contain expected content")
 	}
-}
-
-type AddContentTargetsTest struct {
-	dirs     []string
-	expected []string
 }
 
 func TestAddContentTargetsToDirs(t *testing.T) {
