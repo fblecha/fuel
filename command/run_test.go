@@ -16,7 +16,6 @@ type AddContentTargetsTest struct {
 	expected []string
 }
 
-
 func TestRunHelp(t *testing.T) {
 	new()
 	cdRuntest(t)
@@ -92,6 +91,7 @@ func TestCopyStyleDirectory(t *testing.T) {
 	if err := filepath.Walk(styleDir, WalkStyleDirectory); err != nil {
 		t.Error(err)
 	}
+	cdBack(t)
 	cleanup(t)
 }
 
@@ -124,11 +124,9 @@ func TestTemplateParseAndInsertBasic(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	//re := regexp.MustCompile( content )
 	fmt.Printf("result = %s \n Contains = %s \n", result, strings.Contains(result, content))
 
-	if !strings.Contains(result, content) { //!re.Match([]byte(result)) {
-
+	if !strings.Contains(result, content) {
 		t.Fatal("result did not contain expected content")
 	}
 }
@@ -141,5 +139,17 @@ func TestAddContentTargetsToDirs(t *testing.T) {
 		if actual := addContentTargetsToDirs(test.dirs); !reflect.DeepEqual(actual, test.expected) {
 			t.Errorf("addContentTargetsToDirs(%#q) = %#q, want %#q", test.dirs, actual, test.expected)
 		}
+	}
+}
+
+func TestFindBestMatch(t *testing.T) {
+	tests := []string{"../example/views/dogs/layout.html", "../example/views/layout.html"}
+	result, err := findBestMatch(tests)
+	if err != nil {
+		t.Error(err)
+	}
+	expected := "dog"
+	if !strings.Contains(result, expected) {
+		t.Errorf("result does not contained expected string '%v' \n", expected)
 	}
 }

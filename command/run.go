@@ -110,7 +110,6 @@ func loadHTML(appDir string, path string) (string, error) {
 	dirs := PathToDirs(relativePath)         //gives back most general to most specific
 	dirs = Reverse(dirs)                     //now in most specific to general order
 	targets := addContentTargetsToDirs(dirs) //now each dir has a target of something/layout.html
-	targets = addMostSpecificLayout(dirs)    // plus we add a something/blah.layout.html in as well
 	target, err := findBestMatch(targets)
 	if err != nil {
 		return "", err
@@ -129,11 +128,31 @@ func addContentTargetsToDirs(dirs []string) []string {
 	}
 	return results
 }
-func addMostSpecificLayout(dirs []string) []string {
-	return []string{"blah"}
-}
+
+//For all the targets, find the most specific match.  When found, return the string that corresponds to that template.
 func findBestMatch(targets []string) (string, error) {
-	return "", errors.New("not implemented")
+	noMatchError := errors.New("no match found")
+	fmt.Println(targets)
+	if len(targets) > 0 {
+		//can we load target[0]?
+		path := targets[0]
+
+		currentDir, _ := os.Getwd()
+		fmt.Printf("currentDir = %s \n", currentDir)
+
+		if file, err := ioutil.ReadFile(path); err == nil {
+			return string(file), nil
+		} else { //if not, then let's see if we can find it in targets[1:]
+			fmt.Println(err)
+			if len(targets) > 1 {
+				return findBestMatch(targets[1:])
+			} else {
+				return "", noMatchError
+			}
+		}
+	} else {
+		return "", noMatchError
+	}
 }
 
 func renderMarkdown(appDir string, path string, markdownContent string) {
