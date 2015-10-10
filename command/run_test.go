@@ -16,6 +16,11 @@ type AddContentTargetsTest struct {
 	expected []string
 }
 
+type FindBestMatchTest struct {
+	dirs []string
+	expected string
+}
+
 func TestRunHelp(t *testing.T) {
 	new()
 	cdRuntest(t)
@@ -143,13 +148,24 @@ func TestAddContentTargetsToDirs(t *testing.T) {
 }
 
 func TestFindBestMatch(t *testing.T) {
-	tests := []string{"../example/views/dogs/layout.html", "../example/views/layout.html"}
-	result, err := findBestMatch(tests)
-	if err != nil {
-		t.Error(err)
+	tests := []FindBestMatchTest{
+		{
+			[]string{"../example/views/dogs/layout.html", "../example/views/layout.html"},
+			"dog",
+		},
+		{
+			[]string{"../example/views/cats/layout.html", "../example/views/layout.html"},
+			"top",
+		},
 	}
-	expected := "dog"
-	if !strings.Contains(result, expected) {
-		t.Errorf("result does not contained expected string '%v' \n", expected)
+	for _, test := range tests {
+		result, err := findBestMatch(test.dirs)
+		if err != nil {
+			t.Error(err)
+		}
+		if !strings.Contains(result, test.expected) {
+			t.Errorf("result does not contained expected string '%v' \n", test.expected)
+		}
+
 	}
 }
