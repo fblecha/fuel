@@ -5,11 +5,11 @@
 WIP - do not use until there's a release
 
 # fuel
-A static blog that can also persist data to a database.
+A app that will create a blog, and optionally store it in a database.
 
 # Purpose
 
-I wanted to create a series of content that would be available by both an API and via a static website, and I didn't want to use wordpress.  fuel will do two major things:
+I wanted to create a series of content that would be available by both an API and as a static website.  fuel will do two major things:
 1. produce a static website
 2. for each type of content, persist both the data and metadata into a database
 
@@ -45,4 +45,19 @@ kinds of retrievers, a type of [gun dog](https://en.wikipedia.org/wiki/Gun_dog).
 
 [via Wikipedia](https://en.wikipedia.org/wiki/Labrador_Retriever)
 
+```
+
+# How do you run it?
+```shell
+# to create a new blog
+$ fuel my_new_dog_blog
+$ cd my_new_dog_blog
+
+# create some markdown files under my_new_dog_blog/content
+# create some layout.html files under my_new_dog_blog/views
+# optionally put any css/images/etc you need under my_new_dog_blog/style
+
+$ fuel run
+
+# load my_new_dog_blog/public in a web server
 ```
