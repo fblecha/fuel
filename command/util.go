@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"path/filepath"
 	"strings"
 )
@@ -27,7 +28,11 @@ func getFilenameMinusExtension(path string) string {
 }
 
 func GetRelativePath(appDir string, path string) (string, error) {
-	return "", errors.New("blah")
+	//assume that
+	log.Printf("appDir = %s \n path = %s \n", appDir, path)
+	return filepath.Rel(appDir, path)
+
+	//return "", errors.New("blah")
 }
 
 func PathToDirs(path string) []string {

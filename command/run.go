@@ -74,9 +74,6 @@ func renderFuel(path string) error {
 		if jsonMap, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
 			storeJSON(jsonMap)
 			renderMarkdown(appDir, path, markdownStr)
-
-			//result, err := ParseAndInsert(content, htmlTemplate)
-
 		} else {
 			return err
 		}
@@ -92,6 +89,7 @@ func storeJSON(json map[string]interface{}) error {
 }
 
 func loadHTML(appDir string, path string) (string, error) {
+	log.Printf("path = %s \n", path)
 	//given that path is in ./public/something/maybe/content.md
 
 	//do most exact matching to least exact matching
@@ -104,21 +102,15 @@ func loadHTML(appDir string, path string) (string, error) {
 
 	//first need to make it relative
 	relativePath, err := GetRelativePath(appDir, path)
+	log.Printf("relativePath = %s \n", relativePath)
 	if err != nil {
 		return "", err
 	}
 	dirs := PathToDirs(relativePath)         //gives back most general to most specific
 	dirs = Reverse(dirs)                     //now in most specific to general order
 	targets := addContentTargetsToDirs(dirs) //now each dir has a target of something/layout.html
-	target, err := findBestMatch(targets)
-	if err != nil {
-		return "", err
-	}
 	//target is a form of layout.html file that we'll use as the template
-
-	//load taret as a string and return it
-	result, err2 := LoadFileAsString(target)
-	return result, err2
+	return findBestMatch(targets)
 }
 
 func addContentTargetsToDirs(dirs []string) []string {
@@ -132,13 +124,12 @@ func addContentTargetsToDirs(dirs []string) []string {
 //For all the targets, find the most specific match.  When found, return the string that corresponds to that template.
 func findBestMatch(targets []string) (string, error) {
 	noMatchError := errors.New("no match found")
-	fmt.Println(targets)
+
 	if len(targets) > 0 {
 		//can we load target[0]?
 		path := targets[0]
 
-		currentDir, _ := os.Getwd()
-		fmt.Printf("currentDir = %s \n", currentDir)
+		//currentDir, _ := os.Getwd()
 
 		if file, err := ioutil.ReadFile(path); err == nil {
 			return string(file), nil
@@ -157,12 +148,22 @@ func findBestMatch(targets []string) (string, error) {
 
 func renderMarkdown(appDir string, path string, markdownContent string) {
 	renderer, extensions := configureBlackFriday(path)
-	html := blackfriday.Markdown([]byte(markdownContent), renderer, extensions)
+	content := blackfriday.Markdown([]byte(markdownContent), renderer, extensions)
 
-	template, _ := loadHTML(appDir, path)
+	re2 := regexp.MustCompile("/content/")
 
-	//result, _ := ParseAndInsert(string(html), template)
-	ParseAndInsert(string(html), template)
+	src := []byte(path)
+	replacement := []byte("/views/")
+	htmlPath := re2.ReplaceAll(src, replacement)
+
+	template, _ := loadHTML(appDir, string(htmlPath) )
+	result, err := ParseAndInsert(string(content), template)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//log.Printf("result = %s \n", result)
+
 
 	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
@@ -178,7 +179,7 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 		os.MkdirAll(newDir, 0777)
 		//output is a []byte -- write it to a file
 
-		ioutil.WriteFile(newPath, html, 0644)
+		ioutil.WriteFile(newPath, []byte(result), 0644)
 	}
 }
 
@@ -210,18 +211,23 @@ func renderAllContent(appDir string) error {
 }
 
 func configureBlackFriday(path string) (blackfriday.Renderer, int) {
-	htmlFlags := blackfriday.HTML_COMPLETE_PAGE
+	htmlFlags := 0 //blackfriday.HTML_COMPLETE_
+	htmlFlags |= blackfriday.HTML_SKIP_HTML
+	htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
+
 	title := getFilenameMinusExtension(path)
 	css := ""
 	renderer := blackfriday.HtmlRenderer(htmlFlags, title, css)
 
 	extensions := 0
-	extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
-	extensions |= blackfriday.EXTENSION_TABLES
-	extensions |= blackfriday.EXTENSION_FENCED_CODE
-	extensions |= blackfriday.EXTENSION_AUTOLINK
-	extensions |= blackfriday.EXTENSION_STRIKETHROUGH
-	extensions |= blackfriday.EXTENSION_SPACE_HEADERS
+	extensions |= blackfriday.EXTENSION_LAX_HTML_BLOCKS
+
+	// extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
+	// extensions |= blackfriday.EXTENSION_TABLES
+	// extensions |= blackfriday.EXTENSION_FENCED_CODE
+	// extensions |= blackfriday.EXTENSION_AUTOLINK
+	// extensions |= blackfriday.EXTENSION_STRIKETHROUGH
+	// extensions |= blackfriday.EXTENSION_SPACE_HEADERS
 
 	return renderer, extensions
 }
@@ -277,18 +283,17 @@ func copyStyleDirToPublic(appDir string) error {
 
 func ParseAndInsert(content string, htmlTemplate string) (string, error) {
 	var data = make(map[string]interface{})
-	data["Content"] = content
+	data["Content"] = template.HTML(content)
 
 	t := template.New("t")
-	t, err := t.Parse(htmlTemplate)
+	t, err := t.Parse(  htmlTemplate )
 	if err != nil {
 		return "", err
 	}
 
 	var b bytes.Buffer
 
-	err = t.Execute(&b, data)
-	if err != nil {
+	if err := t.Execute(&b, data ); err != nil {
 		return "", err
 	}
 	return b.String(), nil
