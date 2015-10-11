@@ -5,7 +5,7 @@
 WIP - do not use until there's a release
 
 # fuel
-A app that will create a blog, and optionally store it in a database.
+An app that will create a blog, and optionally store it in a database.
 
 # Purpose
 
@@ -23,7 +23,7 @@ I wanted to create a series of content that would be available by both an API an
 
 # How does it work?
 
-Given a .fuel file, like this:
+Given a .md file, like this:
 
 ```markdown
 {
