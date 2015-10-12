@@ -47,7 +47,6 @@ func PathToDirs(path string) []string {
 			results = append(results, fmt.Sprintf("%s/%s", results[i-1], components[i]))
 		}
 	}
-	fmt.Printf("results = %v \n", results)
 	return results
 }
 
