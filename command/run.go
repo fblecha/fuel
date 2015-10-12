@@ -141,6 +141,7 @@ func findBestMatch(targets []string) (string, error) {
 		//currentDir, _ := os.Getwd()
 
 		if file, err := ioutil.ReadFile(path); err == nil {
+			fmt.Printf("using template = %s of %q \n", path, targets)
 			return string(file), nil
 		} else { //if not, then let's see if we can find it in targets[1:]
 			//fmt.Println(err)
