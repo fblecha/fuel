@@ -2,6 +2,7 @@ fuel
 tmp/
 example/public/
 coverage.out
+blah/
 
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
