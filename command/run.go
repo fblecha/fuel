@@ -3,7 +3,7 @@ package command
 import (
 	"errors"
 	"fmt"
-	"github.com/fblecha/blackfriday"
+	"github.com/russross/blackfriday"
 	"github.com/mitchellh/cli"
 	"io/ioutil"
 	"log"
@@ -84,12 +84,11 @@ func renderFuel(path string) error {
 }
 
 func storeJSON(json map[string]interface{}) error {
-	fmt.Printf("%s \n", json)
+	//fmt.Printf("%s \n", json)
 	return nil
 }
 
 func loadHTML(appDir string, path string) (string, error) {
-	log.Printf("path = %s \n", path)
 	//given that path is in ./public/something/maybe/content.md
 
 	//do most exact matching to least exact matching
@@ -102,15 +101,23 @@ func loadHTML(appDir string, path string) (string, error) {
 
 	//first need to make it relative
 	relativePath, err := GetRelativePath(appDir, path)
-	log.Printf("relativePath = %s \n", relativePath)
+
+	//fmt.Printf("relativePath = %s appDir = %s path=%s \n", relativePath, appDir, path)
+
+
 	if err != nil {
 		return "", err
 	}
 	dirs := PathToDirs(relativePath)         //gives back most general to most specific
+	//fmt.Printf("dirs = %q \n", dirs)
 	dirs = Reverse(dirs)                     //now in most specific to general order
 	targets := addContentTargetsToDirs(dirs) //now each dir has a target of something/layout.html
+	//fmt.Printf("targets = %q \n", targets)
+
 	//target is a form of layout.html file that we'll use as the template
-	return findBestMatch(targets)
+	result, err := findBestMatch(targets)
+	//fmt.Printf("result = %s \n", result)
+	return result, err
 }
 
 func addContentTargetsToDirs(dirs []string) []string {
@@ -129,12 +136,14 @@ func findBestMatch(targets []string) (string, error) {
 		//can we load target[0]?
 		path := targets[0]
 
+		//fmt.Printf("path = %s \n", path)
+
 		//currentDir, _ := os.Getwd()
 
 		if file, err := ioutil.ReadFile(path); err == nil {
 			return string(file), nil
 		} else { //if not, then let's see if we can find it in targets[1:]
-			fmt.Println(err)
+			//fmt.Println(err)
 			if len(targets) > 1 {
 				return findBestMatch(targets[1:])
 			} else {
@@ -157,6 +166,8 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 	htmlPath := re2.ReplaceAll(src, replacement)
 
 	template, _ := loadHTML(appDir, string(htmlPath) )
+	//fmt.Printf("template = %s \n", template)
+
 	result, err := ParseAndInsert(string(content), template)
 	if err != nil {
 		log.Fatal(err)

@@ -47,6 +47,35 @@ kinds of retrievers, a type of [gun dog](https://en.wikipedia.org/wiki/Gun_dog).
 
 ```
 
+# Installation
+
+Type the following commands into your Terminal.
+
+1. Install homebrew (see http://brew.sh/)
+2. Install go
+```shell
+$ brew install go
+```
+3. Edit your $GOPATH
+
+You can edit it manually view your terminal:
+```shell
+export GOPATH=$HOME/go
+```
+or preferably you can edit your .bashrc file (assuming you're using bash) to have it:
+```shell
+
+```
+
+
+
+```shell
+$ go get github.com/fblecha/fuel
+$ cd ~/go/src/github.com/fblecha/fuel
+$ go install
+```
+
+
 # How do you run it?
 ```shell
 # to create a new blog
