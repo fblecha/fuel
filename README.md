@@ -4,9 +4,6 @@
 
 WIP - do not use until there's a release
 
-# fuel
-An app that will create a blog, and optionally store it in a database.
-
 # Purpose
 
 I wanted to create a series of content that would be available by both an API and as a static website.  fuel will do two major things:
@@ -16,6 +13,7 @@ I wanted to create a series of content that would be available by both an API an
 ## Databases supported
 * (WIP) postgresql
 * (Not started) DynamoDB
+
 ## Expected support
 - Create new content
 - Publish new content
@@ -46,6 +44,7 @@ kinds of retrievers, a type of [gun dog](https://en.wikipedia.org/wiki/Gun_dog).
 [via Wikipedia](https://en.wikipedia.org/wiki/Labrador_Retriever)
 
 ```
+fuel will convert it until a HTML file.
 
 # Installation
 
@@ -62,16 +61,19 @@ You can edit it manually view your terminal:
 ```shell
 export GOPATH=$HOME/go
 ```
-or preferably you can edit your .bashrc file (assuming you're using bash) to have it:
-```shell
+or preferably you can edit your .bashrc file (assuming you're using bash) to have it.
 
-```
-
-
+4. Get fuel
 
 ```shell
 $ go get github.com/fblecha/fuel
 $ cd ~/go/src/github.com/fblecha/fuel
+```
+
+5. Install fuel
+
+This will install fuel into your $GOPATH/bin directory.
+```shell
 $ go install
 ```
 
@@ -90,3 +92,7 @@ $ fuel run
 
 # load my_new_dog_blog/public in a web server
 ```
+
+## Todo
+
+see the [Todo file](./Todo.md)
