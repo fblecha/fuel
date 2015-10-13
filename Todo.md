@@ -9,6 +9,4 @@
 - add server command
 - add watch command
 
-- fix the fact that something (blackfriday?) is parsing out HTML comments
-
 - add verbose option to 'fuel run' that displays which template is used
