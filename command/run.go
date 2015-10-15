@@ -169,12 +169,12 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 	template, _ := loadHTML(appDir, string(htmlPath) )
 	//fmt.Printf("template = %s \n", template)
 
-	result, err := ParseAndInsert(string(content), template)
+	result, err := ParseAndInsert(appDir, string(content), template)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//log.Printf("result = %s \n", result)
+	//log.Printf("\n\n\nresult = %s \n", result)
 
 
 	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
@@ -224,15 +224,17 @@ func renderAllContent(appDir string) error {
 
 func configureBlackFriday(path string) (blackfriday.Renderer, int) {
 	htmlFlags := 0 //blackfriday.HTML_COMPLETE_
-	htmlFlags |= blackfriday.HTML_SKIP_HTML
-	htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
+	//htmlFlags |= blackfriday.HTML_SKIP_HTML
+	//htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
+	//htmlFlags |= blackfriday.HTML_USE_XHTML
 
 	title := getFilenameMinusExtension(path)
 	css := ""
 	renderer := blackfriday.HtmlRenderer(htmlFlags, title, css)
 
 	extensions := 0
-	extensions |= blackfriday.EXTENSION_LAX_HTML_BLOCKS
+	//extensions |= blackfriday.EXTENSION_NO_EMPTY_LINE_BEFORE_BLOCK
+	//extensions |= blackfriday.EXTENSION_LAX_HTML_BLOCKS
 
 	// extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
 	// extensions |= blackfriday.EXTENSION_TABLES
@@ -293,7 +295,7 @@ func copyStyleDirToPublic(appDir string) error {
 	return shutil.CopyTree(src, dest, nil)
 }
 
-func ParseAndInsert(content string, htmlTemplate string) (string, error) {
+func ParseAndInsert(appDir string, content string, htmlTemplate string) (string, error) {
 	var data = make(map[string]interface{})
 	data["Content"] = template.HTML(content)
 
@@ -303,10 +305,38 @@ func ParseAndInsert(content string, htmlTemplate string) (string, error) {
 		return "", err
 	}
 
+	//parse all partials
+	partials = nil
+	t, err = parseAllPartials(appDir, t)
+	if err != nil {
+		return "", err
+	}
+
+
 	var b bytes.Buffer
 
 	if err := t.Execute(&b, data ); err != nil {
 		return "", err
 	}
 	return b.String(), nil
+}
+
+var partials []string
+
+func parseAllPartials(appDir string, t *template.Template) (*template.Template, error) {
+	root := fmt.Sprintf("%s/views/partials", appDir)
+	//for appDir/views/partials, load all files in that directory into partials
+	filepath.Walk(root, walkPartials)
+	return t.ParseFiles(partials...)
+}
+
+
+func walkPartials(path string, f os.FileInfo, err error) error {
+	switch filepath.Ext(path) {
+	case ".html":
+		fmt.Println(path)
+		partials = append(partials, path)
+		return nil
+	}
+	return nil
 }

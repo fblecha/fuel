@@ -125,7 +125,7 @@ func TestTemplateParseAndInsertBasic(t *testing.T) {
 </body>
 </html>
 `
-	result, err := ParseAndInsert(content, htmlTemplate)
+	result, err := ParseAndInsert("../example", content, htmlTemplate)
 	if err != nil {
 		t.Error(err)
 	}
