@@ -44,7 +44,7 @@ kinds of retrievers, a type of [gun dog](https://en.wikipedia.org/wiki/Gun_dog).
 [via Wikipedia](https://en.wikipedia.org/wiki/Labrador_Retriever)
 
 ```
-fuel will convert it until a HTML file.
+fuel will convert it into a HTML file.
 
 # Installation
 
