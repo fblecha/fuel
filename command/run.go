@@ -306,11 +306,11 @@ func ParseAndInsert(appDir string, content string, htmlTemplate string) (string,
 	}
 
 	//parse all partials
-	partials = nil
-	t, err = parseAllPartials(appDir, t)
-	if err != nil {
-		return "", err
-	}
+	// partials = nil
+	// t, err = parseAllPartials(appDir, t)
+	// if err != nil {
+	// 	return "", err
+	// }
 
 
 	var b bytes.Buffer
