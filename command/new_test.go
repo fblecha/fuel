@@ -40,6 +40,8 @@ func TestCreateNewProject(t *testing.T) {
 		fmt.Sprintf("%s/runtest/config", currentDir),
 		fmt.Sprintf("%s/runtest/content", currentDir),
 		fmt.Sprintf("%s/runtest/style", currentDir),
+		fmt.Sprintf("%s/runtest/views", currentDir),
+		fmt.Sprintf("%s/runtest/views/partials", currentDir),
 	}
 
 	for _, expectedDir := range expectedDirs {

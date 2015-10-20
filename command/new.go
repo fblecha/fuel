@@ -49,6 +49,7 @@ func createChildDirs(appDir string) {
 		{appDir, "config"},  //central source for the app config
 		{appDir, "style"},   //central source for the app config
 		{appDir, "views"},   //central source for the app config
+		{appDir, "views/partials"},   //central source for the app config
 	}
 	for _, child := range childDirs {
 		if err := child.Create(); err != nil {
