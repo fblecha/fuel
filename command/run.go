@@ -3,8 +3,8 @@ package command
 import (
 	"errors"
 	"fmt"
-	"github.com/russross/blackfriday"
 	"github.com/mitchellh/cli"
+	"github.com/russross/blackfriday"
 	"io/ioutil"
 	"log"
 	"os"
@@ -104,11 +104,10 @@ func loadHTML(appDir string, path string) (string, error) {
 
 	//fmt.Printf("relativePath = %s appDir = %s path=%s \n", relativePath, appDir, path)
 
-
 	if err != nil {
 		return "", err
 	}
-	dirs := PathToDirs(relativePath)         //gives back most general to most specific
+	dirs := PathToDirs(relativePath) //gives back most general to most specific
 	//fmt.Printf("dirs = %q \n", dirs)
 	dirs = Reverse(dirs)                     //now in most specific to general order
 	targets := addContentTargetsToDirs(dirs) //now each dir has a target of something/layout.html
@@ -166,7 +165,7 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 	replacement := []byte("/views/")
 	htmlPath := re2.ReplaceAll(src, replacement)
 
-	template, _ := loadHTML(appDir, string(htmlPath) )
+	template, _ := loadHTML(appDir, string(htmlPath))
 	//fmt.Printf("template = %s \n", template)
 
 	result, err := ParseAndInsert(appDir, string(content), template)
@@ -175,7 +174,6 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 	}
 
 	//log.Printf("\n\n\nresult = %s \n", result)
-
 
 	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
@@ -300,7 +298,7 @@ func ParseAndInsert(appDir string, content string, htmlTemplate string) (string,
 	data["Content"] = template.HTML(content)
 
 	t := template.New("t")
-	t, err := t.Parse(  htmlTemplate )
+	t, err := t.Parse(htmlTemplate)
 	if err != nil {
 		return "", err
 	}
@@ -312,10 +310,9 @@ func ParseAndInsert(appDir string, content string, htmlTemplate string) (string,
 	// 	return "", err
 	// }
 
-
 	var b bytes.Buffer
 
-	if err := t.Execute(&b, data ); err != nil {
+	if err := t.Execute(&b, data); err != nil {
 		return "", err
 	}
 	return b.String(), nil
@@ -329,7 +326,6 @@ func parseAllPartials(appDir string, t *template.Template) (*template.Template, 
 	filepath.Walk(root, walkPartials)
 	return t.ParseFiles(partials...)
 }
-
 
 func walkPartials(path string, f os.FileInfo, err error) error {
 	switch filepath.Ext(path) {

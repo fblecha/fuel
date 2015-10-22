@@ -1,30 +1,29 @@
 package command
 
 import (
-  "testing"
-  //"html/template"
-  //"os"
-  //"fmt"
-  "path/filepath"
+	"testing"
+	//"html/template"
+	//"os"
+	//"fmt"
+	"path/filepath"
 )
 
 func TestConvertTemplateName(t *testing.T) {
-  appDir, err := filepath.Abs("../example")
-  if err != nil {
-    t.Fatal(err)
-  }
-  path := "../example/views/dogs/layout.html"
-  absPath, _ := filepath.Abs(path)
-  if err != nil {
-    t.Fatal(err)
-  }
-  expectedName := "dogs/layout.html"
-  actualName := ConvertTemplateName(appDir, absPath)
-  if actualName != expectedName {
-    t.Fatalf("Expected '%s' but actually got '%s' ", expectedName, actualName )
-  }
+	appDir, err := filepath.Abs("../example")
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := "../example/views/dogs/layout.html"
+	absPath, _ := filepath.Abs(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedName := "dogs/layout.html"
+	actualName := ConvertTemplateName(appDir, absPath)
+	if actualName != expectedName {
+		t.Fatalf("Expected '%s' but actually got '%s' ", expectedName, actualName)
+	}
 }
-
 
 // func TestFindPartialTemplates(t *testing.T) {
 //   wd, _ := os.Getwd()

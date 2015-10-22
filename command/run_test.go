@@ -17,7 +17,7 @@ type AddContentTargetsTest struct {
 }
 
 type FindBestMatchTest struct {
-	dirs []string
+	dirs     []string
 	expected string
 }
 

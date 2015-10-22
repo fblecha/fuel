@@ -45,11 +45,11 @@ func createAppRootDir(name string) error {
 
 func createChildDirs(appDir string) {
 	childDirs := [...]fuelDir{
-		{appDir, "content"}, //the primary app location -- most new code will go in here
-		{appDir, "config"},  //central source for the app config
-		{appDir, "style"},   //central source for the app config
-		{appDir, "views"},   //central source for the app config
-		{appDir, "views/partials"},   //central source for the app config
+		{appDir, "content"},        //the primary app location -- most new code will go in here
+		{appDir, "config"},         //central source for the app config
+		{appDir, "style"},          //central source for the app config
+		{appDir, "views"},          //central source for the app config
+		{appDir, "views/partials"}, //central source for the app config
 	}
 	for _, child := range childDirs {
 		if err := child.Create(); err != nil {
