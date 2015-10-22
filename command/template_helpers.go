@@ -4,40 +4,56 @@ import (
   "fmt"
   "os"
   "path/filepath"
+  "log"
+  "io/ioutil"
 	//"regexp"
 	//"strings"
 	//"bufio"
 	//"bytes"
 	//"github.com/termie/go-shutil"
 	"html/template"
+  "strings"
 )
 
-func LoadPartialTemplates(partialTemplatePaths []string, parent *template.Template) *template.Template {
-  // for i, path := range partialTemplatePaths {
-  //
-  // }
-  return parent
+func LoadPartialTemplates(appDir string, partialTemplatePaths []string, collectorTemplate *template.Template) *template.Template {
+  for _, path := range partialTemplatePaths {
+    input, err := ioutil.ReadFile(path)
+    if err != nil {
+      log.Print(err)
+      continue
+    }
+    //HACK revisit using template.Must
+    collectorTemplate = template.Must(collectorTemplate.Clone())
+    name := ConvertTemplateName(appDir, path)
+    collectorTemplate = template.Must(collectorTemplate.New(name).Parse(string(input)))
+  }
+  return collectorTemplate
+}
+
+func ConvertTemplateName(appDir string, path string) string {
+  relPath := strings.Split(path, fmt.Sprintf("%s/views/", appDir))
+  fmt.Printf("relPath = %q \n", relPath)
+  result := relPath[1]
+  fmt.Printf("result = %s \n", result)
+  return result //HACK error prone
 }
 
 func FindPartialTemplates(appDir string) []string {
-  var partials []string
-  originalDir, _ := os.Getwd()  //HACK - check error
-  os.Chdir("../example")  //HACK - check error
+  partials :=  make( []string,0 )
 
   walker := func (path string, f os.FileInfo, err error) error {
   	switch filepath.Ext(path) {
   	case ".html":
-      relPath, _ := filepath.Rel(appDir, path)
-  		fmt.Println( relPath )
-  		partials = append(partials, path)
+      //relPath, _ := filepath.Rel(appDir, path)
+  		//fmt.Println( relPath )
+      //absPath, _ := filepath.Abs(relPath)
+  		partials = append(partials, path )
   		return nil
   	}
   	return nil
   }
-
-	root := fmt.Sprintf("%s/views", ".")
+	root := fmt.Sprintf("%s/views", appDir)
 	//for appDir/views/partials, load all files in that directory into partials
 	filepath.Walk(root, walker)
-  os.Chdir(originalDir) //HACK - check error
   return partials
 }
