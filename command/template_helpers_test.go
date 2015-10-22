@@ -25,35 +25,31 @@ func TestConvertTemplateName(t *testing.T) {
 	}
 }
 
-// func TestFindPartialTemplates(t *testing.T) {
-//   wd, _ := os.Getwd()
-//   os.Chdir("../example")
-//   expectations := []string {
-//     "views/dogs/menu2.partial.html",  //dog specific menu
-//     "/views/menu.partial.html",  //site menu
-//   }
-//   dir, err := filepath.Abs("../example")
-//   if err != nil {
-//     t.Fatal(err)
-//   }
-//   results := FindPartialTemplates(dir)
-//
-//
-//   tests := make(map[string]bool)
-//
-//
-//
-//   for _, val := range results {
-//     tests[val] = true
-//   }
-//
-//   for _, expected := range expectations {
-//     if _, ok := tests[expected]; ok != true {
-//       t.Fatalf("expected %s \n but it was not found in %q \n with input of %q \n", expected, tests, results)
-//     }
-//   }
-//   os.Chdir(wd)
-// }
+func TestFindPartialTemplates(t *testing.T) {
+  wd, _ := os.Getwd()
+  os.Chdir("../example")
+  expectations := []string {
+    "views/dogs/menu2.partial.html",  //dog specific menu
+    "/views/menu.partial.html",  //site menu
+  }
+  dir, err := filepath.Abs("../example")
+  if err != nil {
+    t.Fatal(err)
+  }
+  results := FindPartialTemplates(dir)
+  tests := make(map[string]bool)
+
+  for _, val := range results {
+    tests[val] = true
+  }
+
+  for _, expected := range expectations {
+    if _, ok := tests[expected]; ok != true {
+      t.Fatalf("expected %s \n but it was not found in %q \n with input of %q \n", expected, tests, results)
+    }
+  }
+  os.Chdir(wd)
+}
 
 // func TestLoadPartialTemplates(t *testing.T) {
 //   tmpl := template.New("root")
