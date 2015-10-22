@@ -11,7 +11,7 @@ I wanted to create a series of content that would be available by both an API an
 2. for each type of content, persist both the data and metadata into a database
 
 ## Databases supported
-* (WIP) postgresql
+* (Not started) postgresql
 * (Not started) DynamoDB
 
 ## Expected support
