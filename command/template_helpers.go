@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
+	//"log"
 	"os"
 	"path/filepath"
 	//"regexp"
@@ -16,27 +16,42 @@ import (
 )
 
 func LoadPartialTemplates(appDir string, partialTemplatePaths []string, collectorTemplate *template.Template) *template.Template {
+	if len(partialTemplatePaths) < 1 {
+		fmt.Printf("Expect partial templates to be len > 0")
+		return collectorTemplate
+	}
 	for _, path := range partialTemplatePaths {
 		input, err := ioutil.ReadFile(path)
 		if err != nil {
-			log.Print(err)
+			//log.Print(err)
 			continue
 		}
+
 		//HACK revisit using template.Must
-		collectorTemplate = template.Must(collectorTemplate.Clone())
+		//collectorTemplate = template.Must(collectorTemplate.Clone())
 		name := ConvertTemplateName(appDir, path)
-		collectorTemplate = template.Must(collectorTemplate.New(name).Parse(string(input)))
+		fmt.Println(input)
+		fmt.Println(name)
+		//collectorTemplate = template.Must(collectorTemplate.New(name).Parse(string(input)))
 	}
 	return collectorTemplate
 }
 
 func ConvertTemplateName(appDir string, path string) string {
 	relPath := strings.Split(path, fmt.Sprintf("%s/views/", appDir))
-	result := relPath[1]
+	var result string
+	if len(relPath) < 2 {
+		fmt.Printf("relPath was less than 2, relPath was %s with len = %s \n", relPath, len(relPath))
+	} else {
+		result = relPath[1]
+	}
 	return result //HACK error prone
 }
 
 func FindPartialTemplates(appDir string) []string {
+	absDir, _ := filepath.Abs(appDir)
+	fmt.Printf("appDir = %s absVersion = %s \n", appDir, absDir)
+	//appDirAbs = filepath.Abs(appDir)
 	partials := make([]string, 0)
 
 	walker := func(path string, f os.FileInfo, err error) error {

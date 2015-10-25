@@ -1,8 +1,8 @@
 package command
 
 import (
-	//	"fmt"
-	//"html/template"
+	"fmt"
+	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
@@ -54,25 +54,28 @@ func TestFindPartialTemplates(t *testing.T) {
 	os.Chdir(wd)
 }
 
-// func TestLoadPartialTemplates(t *testing.T) {
-// 	//tmpl := template.New("root")
-// 	partials = FindPartialTemplates("../example")
-// 	fmt.Printf("found partials = %q \n", partials)
-//
-// 	//appDir, _ := filepath.Abs("../example") //HACK err not used
-// 	//tmpl = LoadPartialTemplates(appDir, partials, tmpl)
-// 	// var results map[string]bool
-// 	//fmt.Printf("len(tmpl.Templates) = %s \n", len(tmpl.Templates()))
-// 	// for _, tp := range tmpl.Templates() {
-// 	// 	results[tp.Name()] = true
-// 	// }
-// 	// expectations := []string{
-// 	// 	"views/dogs/menu.partial.html", //dog specific menu
-// 	// 	"views/menu.partial.html",      //site menu
-// 	// }
-// 	// for _, expected := range expectations {
-// 	// 	if _, ok := results[expected]; ok != true {
-// 	// 		t.Fatalf("expected %s in %q but it wasn't there", expected, results)
-// 	// 	}
-// 	// }
-// }
+func TestLoadPartialTemplates(t *testing.T) {
+	tmpl := template.New("root")
+
+	appDir, _ := filepath.Abs("../example") //HACK err not used
+
+	partials = FindPartialTemplates(appDir)
+	fmt.Printf("found partials = %q \n", partials)
+
+	tmpl = LoadPartialTemplates(appDir, partials, tmpl)
+	fmt.Println(tmpl)
+	// //var results map[string]bool
+	// fmt.Printf("len(tmpl.Templates) = %s \n", len(tmpl.Templates()))
+	// for _, tp := range tmpl.Templates() {
+	// 	results[tp.Name()] = true
+	// }
+	// expectations := []string{
+	// 	"views/dogs/menu.partial.html", //dog specific menu
+	// 	"views/menu.partial.html",      //site menu
+	// }
+	// for _, expected := range expectations {
+	// 	if _, ok := results[expected]; ok != true {
+	// 		t.Fatalf("expected %s in %q but it wasn't there", expected, results)
+	// 	}
+	// }
+}
