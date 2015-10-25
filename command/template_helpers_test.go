@@ -60,22 +60,26 @@ func TestLoadPartialTemplates(t *testing.T) {
 	appDir, _ := filepath.Abs("../example") //HACK err not used
 
 	partials = FindPartialTemplates(appDir)
-	fmt.Printf("found partials = %q \n", partials)
+	//fmt.Printf("found partials = %q \n", partials)
 
 	tmpl = LoadPartialTemplates(appDir, partials, tmpl)
-	fmt.Println(tmpl)
-	// //var results map[string]bool
-	// fmt.Printf("len(tmpl.Templates) = %s \n", len(tmpl.Templates()))
-	// for _, tp := range tmpl.Templates() {
-	// 	results[tp.Name()] = true
-	// }
-	// expectations := []string{
-	// 	"views/dogs/menu.partial.html", //dog specific menu
-	// 	"views/menu.partial.html",      //site menu
-	// }
-	// for _, expected := range expectations {
-	// 	if _, ok := results[expected]; ok != true {
-	// 		t.Fatalf("expected %s in %q but it wasn't there", expected, results)
-	// 	}
-	// }
+	//fmt.Println(tmpl)
+
+	var results map[string]bool
+	results = make(map[string]bool)
+
+	//fmt.Printf("len(tmpl.Templates) = %s \n", len(tmpl.Templates()))
+	for _, tp := range tmpl.Templates() {
+		results[tp.Name()] = true
+		fmt.Printf("added %s to map\n", tp.Name())
+	}
+	expectations := []string{
+		"dogs/menu2.partial.html", //dog specific menu
+		"menu.partial.html",       //site menu
+	}
+	for _, expected := range expectations {
+		if _, ok := results[expected]; ok != true {
+			t.Fatalf("expected %s in %s but it wasn't there", expected, results)
+		}
+	}
 }

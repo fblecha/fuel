@@ -3,7 +3,7 @@ package command
 import (
 	"fmt"
 	"io/ioutil"
-	//"log"
+	"log"
 	"os"
 	"path/filepath"
 	//"regexp"
@@ -17,22 +17,22 @@ import (
 
 func LoadPartialTemplates(appDir string, partialTemplatePaths []string, collectorTemplate *template.Template) *template.Template {
 	if len(partialTemplatePaths) < 1 {
-		fmt.Printf("Expect partial templates to be len > 0")
+		log.Printf("Expect partial templates to be len > 0")
 		return collectorTemplate
 	}
 	for _, path := range partialTemplatePaths {
 		input, err := ioutil.ReadFile(path)
 		if err != nil {
-			//log.Print(err)
+			log.Print(err)
 			continue
 		}
 
 		//HACK revisit using template.Must
-		//collectorTemplate = template.Must(collectorTemplate.Clone())
+		collectorTemplate = template.Must(collectorTemplate.Clone())
 		name := ConvertTemplateName(appDir, path)
-		fmt.Println(input)
-		fmt.Println(name)
-		//collectorTemplate = template.Must(collectorTemplate.New(name).Parse(string(input)))
+		//fmt.Println(input)
+		fmt.Printf("templatName = %s \n", name)
+		collectorTemplate = template.Must(collectorTemplate.New(name).Parse(string(input)))
 	}
 	return collectorTemplate
 }
@@ -41,7 +41,7 @@ func ConvertTemplateName(appDir string, path string) string {
 	relPath := strings.Split(path, fmt.Sprintf("%s/views/", appDir))
 	var result string
 	if len(relPath) < 2 {
-		fmt.Printf("relPath was less than 2, relPath was %s with len = %s \n", relPath, len(relPath))
+		log.Printf("relPath was less than 2, relPath was %s with len = %s \n", relPath, len(relPath))
 	} else {
 		result = relPath[1]
 	}
