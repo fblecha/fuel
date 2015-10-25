@@ -1,7 +1,7 @@
 package command
 
 import (
-	"fmt"
+	//"fmt"
 	"html/template"
 	"os"
 	"path/filepath"
@@ -63,15 +63,13 @@ func TestLoadPartialTemplates(t *testing.T) {
 	//fmt.Printf("found partials = %q \n", partials)
 
 	tmpl = LoadPartialTemplates(appDir, partials, tmpl)
-	//fmt.Println(tmpl)
 
 	var results map[string]bool
 	results = make(map[string]bool)
 
-	//fmt.Printf("len(tmpl.Templates) = %s \n", len(tmpl.Templates()))
 	for _, tp := range tmpl.Templates() {
 		results[tp.Name()] = true
-		fmt.Printf("added %s to map\n", tp.Name())
+		//fmt.Printf("added %s to map\n", tp.Name())
 	}
 	expectations := []string{
 		"dogs/menu2.partial.html", //dog specific menu

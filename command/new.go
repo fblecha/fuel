@@ -21,7 +21,7 @@ type fuelDir struct {
 
 func (d *fuelDir) Create() error {
 	newDir := fmt.Sprintf("%v/%v", d.RootDir, d.DirName)
-	log.Printf("creating %v \n", newDir)
+	//log.Printf("creating %v \n", newDir)
 	return os.MkdirAll(newDir, 0777)
 }
 
@@ -38,7 +38,7 @@ Generate a new Fuel blog
 //Create a new app in the absolute location specified by name
 //eg it should be ""/Users/fb3/code/todo" not "todo"
 func createAppRootDir(name string) error {
-	log.Printf("app root dir = %v\n", name)
+	//log.Printf("app root dir = %v\n", name)
 	//mode := int(0777)
 	return os.MkdirAll(name, 0777)
 }

@@ -31,8 +31,12 @@ func LoadPartialTemplates(appDir string, partialTemplatePaths []string, collecto
 		collectorTemplate = template.Must(collectorTemplate.Clone())
 		name := ConvertTemplateName(appDir, path)
 		//fmt.Println(input)
-		fmt.Printf("templatName = %s \n", name)
+		fmt.Printf("templateName = %s \n", name)
 		collectorTemplate = template.Must(collectorTemplate.New(name).Parse(string(input)))
+	}
+
+	for _, tp := range collectorTemplate.Templates() {
+		fmt.Printf("tp.Name = %s \n", tp.Name())
 	}
 	return collectorTemplate
 }
@@ -49,8 +53,8 @@ func ConvertTemplateName(appDir string, path string) string {
 }
 
 func FindPartialTemplates(appDir string) []string {
-	absDir, _ := filepath.Abs(appDir)
-	fmt.Printf("appDir = %s absVersion = %s \n", appDir, absDir)
+	//absDir, _ := filepath.Abs(appDir)
+	//fmt.Printf("appDir = %s absVersion = %s \n", appDir, absDir)
 	//appDirAbs = filepath.Abs(appDir)
 	partials := make([]string, 0)
 

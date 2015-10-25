@@ -166,6 +166,7 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 	htmlPath := re2.ReplaceAll(src, replacement)
 
 	template, _ := loadHTML(appDir, string(htmlPath))
+
 	//fmt.Printf("template = %s \n", template)
 
 	result, err := ParseAndInsert(appDir, string(content), template)
@@ -297,24 +298,36 @@ func ParseAndInsert(appDir string, content string, htmlTemplate string) (string,
 	var data = make(map[string]interface{})
 	data["Content"] = template.HTML(content)
 
-	t := template.New("t")
-	t, err := t.Parse(htmlTemplate)
-	if err != nil {
-		return "", err
-	}
+	//var t *template.Template
+	//var err error
+	//t = template.New("t")
 
-	//parse all partials
-	// partials = nil
-	// t, err = parseAllPartials(appDir, t)
+	tmpl := template.New("root")
+
 	// if err != nil {
 	// 	return "", err
 	// }
 
+	partials := FindPartialTemplates(appDir)
+	fmt.Printf("found partials = %q \n", partials)
+	tmpl = LoadPartialTemplates(appDir, partials, tmpl)
+
+	collectorTemplate := template.Must(tmpl.Clone())
+	//name := ConvertTemplateName(appDir, path)
+	//fmt.Println(input)
+	//fmt.Printf("templateName = %s \n", name)
+	tmpl = template.Must(collectorTemplate.New("root").Parse(string(htmlTemplate)))
+
+	//t.Parse(htmlTemplate)
+
 	var b bytes.Buffer
 
-	if err := t.Execute(&b, data); err != nil {
+	if err := tmpl.Execute(&b, data); err != nil {
 		return "", err
 	}
+
+	fmt.Printf("template Execute = \n %s \n", string(b.String()))
+
 	return b.String(), nil
 }
 
