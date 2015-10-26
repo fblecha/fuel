@@ -304,10 +304,6 @@ func ParseAndInsert(appDir string, content string, htmlTemplate string) (string,
 
 	tmpl := template.New("root")
 
-	// if err != nil {
-	// 	return "", err
-	// }
-
 	partials := FindPartialTemplates(appDir)
 	fmt.Printf("found partials = %q \n", partials)
 	tmpl = LoadPartialTemplates(appDir, partials, tmpl)
@@ -333,13 +329,12 @@ func ParseAndInsert(appDir string, content string, htmlTemplate string) (string,
 
 func parseAllPartials(appDir string, t *template.Template) (*template.Template, error) {
 	var partials []string
-
 	walkPartials := func(path string, f os.FileInfo, err error) error {
 		switch filepath.Ext(path) {
 		case ".html":
 			fmt.Println(path)
 			partials = append(partials, path)
-			return nil
+			// return nil
 		}
 		return nil
 	}

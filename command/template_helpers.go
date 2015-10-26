@@ -28,7 +28,7 @@ func LoadPartialTemplates(appDir string, partialTemplatePaths []string, collecto
 		}
 
 		//HACK revisit using template.Must
-		collectorTemplate, err = collectorTemplate.Clone()
+		//collectorTemplate, err = collectorTemplate.Clone()
 		if err != nil {
 			log.Printf("Error was %s \n", err)
 			return collectorTemplate
