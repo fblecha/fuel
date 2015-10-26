@@ -73,7 +73,7 @@ func renderFuel(path string) error {
 	if appDir, err := AreWeInProjectDir(); err == nil {
 		if jsonMap, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
 			storeJSON(jsonMap)
-			renderMarkdown(appDir, path, markdownStr)
+			renderMarkdown(appDir, path, markdownStr, jsonMap)
 		} else {
 			return err
 		}
@@ -155,7 +155,7 @@ func findBestMatch(targets []string) (string, error) {
 	}
 }
 
-func renderMarkdown(appDir string, path string, markdownContent string) {
+func renderMarkdown(appDir string, path string, markdownContent string, jsonContent map[string]interface{}) {
 	renderer, extensions := configureBlackFriday(path)
 	content := blackfriday.Markdown([]byte(markdownContent), renderer, extensions)
 
@@ -169,7 +169,7 @@ func renderMarkdown(appDir string, path string, markdownContent string) {
 
 	//fmt.Printf("template = %s \n", template)
 
-	result, err := ParseAndInsert(appDir, string(content), template)
+	result, err := ParseAndInsert(appDir, string(content), jsonContent, template)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -294,13 +294,10 @@ func copyStyleDirToPublic(appDir string) error {
 	return shutil.CopyTree(src, dest, nil)
 }
 
-func ParseAndInsert(appDir string, content string, htmlTemplate string) (string, error) {
-	var data = make(map[string]interface{})
+func ParseAndInsert(appDir string, content string, jsonContent map[string]interface{}, htmlTemplate string) (string, error) {
+	//var data = make(map[string]interface{})
+	var data = jsonContent //HACK come back and clean this up
 	data["Content"] = template.HTML(content)
-
-	//var t *template.Template
-	//var err error
-	//t = template.New("t")
 
 	tmpl := template.New("root")
 
