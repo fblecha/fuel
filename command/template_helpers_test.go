@@ -59,7 +59,7 @@ func TestLoadPartialTemplates(t *testing.T) {
 
 	appDir, _ := filepath.Abs("../example") //HACK err not used
 
-	partials = FindPartialTemplates(appDir)
+	partials := FindPartialTemplates(appDir)
 	//fmt.Printf("found partials = %q \n", partials)
 
 	tmpl = LoadPartialTemplates(appDir, partials, tmpl)

@@ -331,21 +331,21 @@ func ParseAndInsert(appDir string, content string, htmlTemplate string) (string,
 	return b.String(), nil
 }
 
-var partials []string
-
 func parseAllPartials(appDir string, t *template.Template) (*template.Template, error) {
+	var partials []string
+
+	walkPartials := func(path string, f os.FileInfo, err error) error {
+		switch filepath.Ext(path) {
+		case ".html":
+			fmt.Println(path)
+			partials = append(partials, path)
+			return nil
+		}
+		return nil
+	}
+
 	root := fmt.Sprintf("%s/views/partials", appDir)
 	//for appDir/views/partials, load all files in that directory into partials
 	filepath.Walk(root, walkPartials)
 	return t.ParseFiles(partials...)
-}
-
-func walkPartials(path string, f os.FileInfo, err error) error {
-	switch filepath.Ext(path) {
-	case ".html":
-		fmt.Println(path)
-		partials = append(partials, path)
-		return nil
-	}
-	return nil
 }
