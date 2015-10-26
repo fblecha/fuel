@@ -2,26 +2,18 @@
 [![GoDoc](https://godoc.org/github.com/fblecha/fuel?status.svg)](https://godoc.org/github.com/fblecha/fuel)
 
 
-WIP - do not use until there's a release
-
 # Purpose
 
-I wanted to create a series of content that would be available by both an API and as a static website.  fuel will do two major things:
-1. produce a static website
-2. for each type of content, persist both the data and metadata into a database
+Fuel is a static website creator -- it takes in markdown files and produces a static html site you can host from [github pages](https://pages.github.com/), [Amazon S3](https://aws.amazon.com/s3/), or any web host.  Several tools already support this, notably [Jekyl](https://jekyllrb.com/) and [Hugo](https://gohugo.io/).  
 
-## Databases supported
-* (Not started) postgresql
-* (Not started) DynamoDB
-
-## Expected support
-- Create new content
-- Publish new content
-- Save you content to a database
+## So what makes Fuel different?  
+Fuel also has the ability to take in JSON-enhanced markdown (I should totally trademark that) and:
+1. use the JSON in your website **as variables**
+2. store the JSON **and** content into a database   
 
 # How does it work?
 
-Given a .md file, like this:
+Given a normal markdown file or (as in the example below) a JSON-enahanced markdown file:
 
 ```markdown
 {
@@ -52,24 +44,18 @@ Type the following commands into your Terminal.
 
 1. Install homebrew (see http://brew.sh/)
 2. Install go
+
 ```shell
 $ brew install go
 ```
-3. Edit your $GOPATH
 
-You can edit it manually view your terminal:
-```shell
-export GOPATH=$HOME/go
-```
-or preferably you can edit your .bashrc file (assuming you're using bash) to have it.
-
+3. Complete the [go installation instructions](https://golang.org/doc/install).
 4. Get fuel
 
 ```shell
 $ go get github.com/fblecha/fuel
-$ cd ~/go/src/github.com/fblecha/fuel
+$ cd $GOPATH/src/github.com/fblecha/fuel
 ```
-
 5. Install fuel
 
 This will install fuel into your $GOPATH/bin directory.
@@ -79,6 +65,10 @@ $ go install
 
 
 # How do you run it?
+Fuel is a command-line application, so you'll run it via a terminal window.
+
+If you want to create a blog devoted to dogs, then you would do the following steps:
+
 ```shell
 # to create a new blog
 $ fuel my_new_dog_blog
@@ -93,6 +83,25 @@ $ fuel run
 # load my_new_dog_blog/public in a web server
 ```
 
-## Todo
+## What happens when fuel is run?
+Fuel does the following:
+
+1. It creates a public directory.  This directory will be the home of your website.
+2. it copies everything from ./style over to ./public/style.  If you want to copy over CSS, JavaScript, or anything else, put it in your style directory and refer to it as "/style/someting" in your html files.
+3. It looks for each markdown file under ./content and applies a layout (a HTML file) to it so that you end up with ./public/something.html
+
+## How do layouts work?
+
+Insert
+
+
+
+
+# What databases are supported?
+* (Not started) postgresql
+* (Not started) DynamoDB
+
+
+# (Developers) What else needs to be done?
 
 see the [Todo file](./Todo.md)
