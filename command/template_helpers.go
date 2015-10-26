@@ -28,7 +28,11 @@ func LoadPartialTemplates(appDir string, partialTemplatePaths []string, collecto
 		}
 
 		//HACK revisit using template.Must
-		collectorTemplate = template.Must(collectorTemplate.Clone())
+		collectorTemplate, err = collectorTemplate.Clone()
+		if err != nil {
+			log.Printf("Error was %s \n", err)
+			return collectorTemplate
+		}
 		name := ConvertTemplateName(appDir, path)
 		//fmt.Println(input)
 		fmt.Printf("templateName = %s \n", name)
