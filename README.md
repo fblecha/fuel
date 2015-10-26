@@ -95,8 +95,6 @@ Fuel does the following:
 Insert
 
 
-
-
 # What databases are supported?
 * (Not started) postgresql
 * (Not started) DynamoDB
