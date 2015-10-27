@@ -262,7 +262,8 @@ func ParseAndInsert(appDir string, content string, jsonContent map[string]interf
 	tmpl := template.New("root")
 
 	partials := FindPartialTemplates(appDir)
-	fmt.Printf("found partials = %q \n", partials)
+	//TODO put in verbose flag
+	//fmt.Printf("found partials = %q \n", partials)
 	tmpl = LoadPartialTemplates(appDir, partials, tmpl)
 
 	collectorTemplate := template.Must(tmpl.Clone())
