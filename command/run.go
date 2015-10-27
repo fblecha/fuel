@@ -1,21 +1,19 @@
 package command
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/mitchellh/cli"
 	"github.com/russross/blackfriday"
+	"github.com/termie/go-shutil"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
-	//"bufio"
-	"bytes"
-	"github.com/termie/go-shutil"
-	"html/template"
-	//"github.com/microcosm-cc/bluemonday"
 )
 
 type RunCommand struct {
@@ -40,22 +38,18 @@ func (c *RunCommand) Run(args []string) int {
 		log.Fatal(err)
 		return 1
 	}
-	//create public dir
-	if err := createPublicDir(appDir); err != nil {
-		log.Fatal(err)
-		return 1
+
+	steps := []func(string) error{
+		createPublicDir,      //create public dir
+		renderAllContent,     //render all content
+		copyStyleDirToPublic, //copy the style directory over to /public
 	}
-	//render all content
-	if err := renderAllContent(appDir); err != nil {
-		log.Fatal(err)
-		return 1
+	for _, step := range steps {
+		if err := step(appDir); err != nil {
+			log.Fatal(err)
+			return 1
+		}
 	}
-	//copy the style directory over to /public
-	if err := copyStyleDirToPublic(appDir); err != nil {
-		log.Fatal(err)
-		return 1
-	}
-	//both of the commands worked, we're good to go
 	return 0
 }
 
@@ -69,17 +63,16 @@ func createPublicDir(appDir string) error {
 }
 
 func renderFuel(path string) error {
-
-	if appDir, err := AreWeInProjectDir(); err == nil {
-		if jsonMap, markdownStr, err := SplitJsonAndMarkdown(path); err == nil {
-			storeJSON(jsonMap)
-			renderMarkdown(appDir, path, markdownStr, jsonMap)
-		} else {
-			return err
-		}
-	} else {
+	appDir, err := AreWeInProjectDir()
+	if err != nil {
 		return err
 	}
+	jsonMap, markdownStr, err := SplitJsonAndMarkdown(path)
+	if err != nil {
+		return err
+	}
+	storeJSON(jsonMap)
+	renderMarkdown(appDir, path, markdownStr, jsonMap)
 	return nil
 }
 
@@ -135,15 +128,10 @@ func findBestMatch(targets []string) (string, error) {
 		//can we load target[0]?
 		path := targets[0]
 
-		//fmt.Printf("path = %s \n", path)
-
-		//currentDir, _ := os.Getwd()
-
 		if file, err := ioutil.ReadFile(path); err == nil {
 			fmt.Printf("using template = %s of %q \n", path, targets)
 			return string(file), nil
 		} else { //if not, then let's see if we can find it in targets[1:]
-			//fmt.Println(err)
 			if len(targets) > 1 {
 				return findBestMatch(targets[1:])
 			} else {
@@ -160,23 +148,15 @@ func renderMarkdown(appDir string, path string, markdownContent string, jsonCont
 	content := blackfriday.Markdown([]byte(markdownContent), renderer, extensions)
 
 	re2 := regexp.MustCompile("/content/")
-
 	src := []byte(path)
 	replacement := []byte("/views/")
 	htmlPath := re2.ReplaceAll(src, replacement)
-
 	template, _ := loadHTML(appDir, string(htmlPath))
-
-	//fmt.Printf("template = %s \n", template)
 
 	result, err := ParseAndInsert(appDir, string(content), jsonContent, template)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	//log.Printf("\n\n\nresult = %s \n", result)
-
-	//html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 
 	re := regexp.MustCompile("/content/(.+)")
 	if matches := re.FindStringSubmatch(path); matches != nil && len(matches) == 2 {
@@ -189,7 +169,6 @@ func renderMarkdown(appDir string, path string, markdownContent string, jsonCont
 		//make the new dir in public
 		os.MkdirAll(newDir, 0777)
 		//output is a []byte -- write it to a file
-
 		ioutil.WriteFile(newPath, []byte(result), 0644)
 	}
 }
@@ -202,18 +181,18 @@ func convertFromFuelToHTML(tmpPath string) (string, string) {
 	return newDir, newPath
 }
 
-func walkpath(path string, f os.FileInfo, err error) error {
-	switch filepath.Ext(path) {
-	case EXT:
-		return renderFuel(path)
-	}
-	return nil
-}
-
 func renderAllContent(appDir string) error {
 	//for all *.md files appDir/content/** render them into the public dir at same depth
 	//eg. if it's content/blog/post1.md, content/dogs/blacklab.md
 	//then they'd be rendered about appDir/public/blog/post1.html and appDir/public/dogs/blacklab.md
+
+	walkpath := func(path string, f os.FileInfo, err error) error {
+		switch filepath.Ext(path) {
+		case EXT:
+			return renderFuel(path)
+		}
+		return nil
+	}
 	filepath.Walk(appDir, walkpath)
 
 	//TODO also update the persistance layer
@@ -222,26 +201,11 @@ func renderAllContent(appDir string) error {
 }
 
 func configureBlackFriday(path string) (blackfriday.Renderer, int) {
-	htmlFlags := 0 //blackfriday.HTML_COMPLETE_
-	//htmlFlags |= blackfriday.HTML_SKIP_HTML
-	//htmlFlags |= blackfriday.HTML_USE_SMARTYPANTS
-	//htmlFlags |= blackfriday.HTML_USE_XHTML
-
-	title := getFilenameMinusExtension(path)
+	htmlFlags := 0
 	css := ""
-	renderer := blackfriday.HtmlRenderer(htmlFlags, title, css)
-
 	extensions := 0
-	//extensions |= blackfriday.EXTENSION_NO_EMPTY_LINE_BEFORE_BLOCK
-	//extensions |= blackfriday.EXTENSION_LAX_HTML_BLOCKS
-
-	// extensions |= blackfriday.EXTENSION_NO_INTRA_EMPHASIS
-	// extensions |= blackfriday.EXTENSION_TABLES
-	// extensions |= blackfriday.EXTENSION_FENCED_CODE
-	// extensions |= blackfriday.EXTENSION_AUTOLINK
-	// extensions |= blackfriday.EXTENSION_STRIKETHROUGH
-	// extensions |= blackfriday.EXTENSION_SPACE_HEADERS
-
+	title := getFilenameMinusExtension(path)
+	renderer := blackfriday.HtmlRenderer(htmlFlags, title, css)
 	return renderer, extensions
 }
 
@@ -249,11 +213,8 @@ func SplitJsonAndMarkdown(filename string) (map[string]interface{}, string, erro
 	var results [2]string
 	if str, err := ioutil.ReadFile(filename); err == nil {
 		for i, rune := range bytes.Split(str, []byte{'~', '~', '~'}) { //split by "~~~"
-			//fmt.Printf("Counter %d :  %s\n", i, string(rune))
 			results[i] = string(rune)
 		}
-
-		//fmt.Printf("results = %v and len = %s and results[1] = %v \n", results, len(results), len(results[1])==0 )
 
 		if isEmpty(results[1]) {
 			/*
@@ -295,7 +256,6 @@ func copyStyleDirToPublic(appDir string) error {
 }
 
 func ParseAndInsert(appDir string, content string, jsonContent map[string]interface{}, htmlTemplate string) (string, error) {
-	//var data = make(map[string]interface{})
 	var data = jsonContent //HACK come back and clean this up
 	data["Content"] = template.HTML(content)
 
@@ -306,20 +266,14 @@ func ParseAndInsert(appDir string, content string, jsonContent map[string]interf
 	tmpl = LoadPartialTemplates(appDir, partials, tmpl)
 
 	collectorTemplate := template.Must(tmpl.Clone())
-	//name := ConvertTemplateName(appDir, path)
-	//fmt.Println(input)
-	//fmt.Printf("templateName = %s \n", name)
 	tmpl = template.Must(collectorTemplate.New("root").Parse(string(htmlTemplate)))
 
-	//t.Parse(htmlTemplate)
-
 	var b bytes.Buffer
-
 	if err := tmpl.Execute(&b, data); err != nil {
 		return "", err
 	}
-
-	fmt.Printf("template Execute = \n %s \n", string(b.String()))
+	//TODO put in verbose flag
+	//fmt.Printf("template Execute = \n %s \n", string(b.String()))
 
 	return b.String(), nil
 }
@@ -331,7 +285,6 @@ func parseAllPartials(appDir string, t *template.Template) (*template.Template, 
 		case ".html":
 			fmt.Println(path)
 			partials = append(partials, path)
-			// return nil
 		}
 		return nil
 	}

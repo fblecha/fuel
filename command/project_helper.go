@@ -1,8 +1,6 @@
 package command
 
 import (
-	//"log"
-	//"encoding/json"
 	"fmt"
 	"os"
 )

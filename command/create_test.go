@@ -8,9 +8,8 @@ import (
 
 func TestCreateHelp(t *testing.T) {
 	ui := &cli.BasicUi{Writer: os.Stdout}
-	//args := []string{""}
 	cmd := CreateCommand{
-		Name: "new",
+		Name: "create",
 		Ui:   ui,
 	}
 	text := cmd.Help()
@@ -23,7 +22,7 @@ func TestCreateSynopsis(t *testing.T) {
 	ui := &cli.BasicUi{Writer: os.Stdout}
 	//args := []string{""}
 	cmd := CreateCommand{
-		Name: "new",
+		Name: "create",
 		Ui:   ui,
 	}
 	text := cmd.Synopsis()
@@ -33,5 +32,5 @@ func TestCreateSynopsis(t *testing.T) {
 }
 
 func TestCreateContent(t *testing.T) {
-
+	//TODO need to complete this testing
 }

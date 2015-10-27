@@ -27,11 +27,6 @@ func TestNewSynopsis(t *testing.T) {
 
 func TestCreateNewProject(t *testing.T) {
 	new()
-	//test to see if these directories exist
-	// runtest/config
-	// runtest/content
-	// runtest/style
-
 	currentDir, err := os.Getwd()
 	if err != nil {
 		t.Error(err)

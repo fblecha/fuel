@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	//"text/template"
 )
 
 type CreateCommand struct {
@@ -23,7 +22,7 @@ Generate a fuel file for name at path.  E.g.
 $ cd ~/my_train_site
 $ fuel create trains/e-line
 
-will create the file /Users/fb3/my_train_site/trains/e-line.md
+will create the file ~fb3/my_train_site/trains/e-line.md
 
 `
 	return strings.TrimSpace(helpText)
@@ -36,20 +35,24 @@ func (c *CreateCommand) Run(args []string) int {
 	}
 	//assume that we want to create app with name args[0] in the current working directory
 
-	if appDir, err := AreWeInProjectDir(); err == nil {
-		path := args[0]
-		contentName := args[1]
-		createContent(appDir, path, contentName)
-		return 0
-	} else {
+	appDir, err := AreWeInProjectDir()
+	if err != nil {
 		log.Fatal(err)
 		return 1
 	}
 
+	path := args[0]
+	contentName := args[1]
+	if err := createContent(appDir, path, contentName); err != nil {
+		log.Fatal(err)
+		return 1
+	}
+	//else we're all good, so let's return 0
+	return 0
 }
 
 func (c *CreateCommand) Synopsis() string {
-	return "creates a new markdown file"
+	return "creates a new markdown content file"
 }
 
 func createContent(appDir string, path string, contentName string) error {
