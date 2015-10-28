@@ -18,6 +18,8 @@ That command tells fuel to create a new installation that's setup for creating y
 
 ## The content directory
 
+
+
 ## The config directory
 
 ## The views directory
