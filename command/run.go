@@ -50,6 +50,7 @@ func (c *RunCommand) Run(args []string) int {
 			return 1
 		}
 	}
+	fmt.Println("Start...Finished!")
 	return 0
 }
 
@@ -129,7 +130,8 @@ func findBestMatch(targets []string) (string, error) {
 		path := targets[0]
 
 		if file, err := ioutil.ReadFile(path); err == nil {
-			fmt.Printf("using template = %s of %q \n", path, targets)
+			//TODO replace when verbose flag added
+			//fmt.Printf("using template = %s of %q \n", path, targets)
 			return string(file), nil
 		} else { //if not, then let's see if we can find it in targets[1:]
 			if len(targets) > 1 {

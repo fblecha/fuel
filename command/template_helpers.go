@@ -34,14 +34,14 @@ func LoadPartialTemplates(appDir string, partialTemplatePaths []string, collecto
 			return collectorTemplate
 		}
 		name := ConvertTemplateName(appDir, path)
-		//fmt.Println(input)
-		fmt.Printf("templateName = %s \n", name)
+		//fmt.Printf("templateName = %s \n", name)
 		collectorTemplate = template.Must(collectorTemplate.New(name).Parse(string(input)))
 	}
 
-	for _, tp := range collectorTemplate.Templates() {
-		fmt.Printf("tp.Name = %s \n", tp.Name())
-	}
+	//TODO add this loop when debug flag is supported
+	// for _, tp := range collectorTemplate.Templates() {
+	// 	fmt.Printf("tp.Name = %s \n", tp.Name())
+	// }
 	return collectorTemplate
 }
 
