@@ -1,8 +1,9 @@
 [![Build Status](https://drone.io/github.com/fblecha/fuel/status.png)](https://drone.io/github.com/fblecha/fuel/latest)
 [![GoDoc](https://godoc.org/github.com/fblecha/fuel?status.svg)](https://godoc.org/github.com/fblecha/fuel)
 
+# Background
 
-# Purpose
+## Purpose
 
 Fuel is a static website creator -- it takes in markdown files and produces a static html site you can host from [github pages](https://pages.github.com/), [Amazon S3](https://aws.amazon.com/s3/), or any web host.  Several tools already support this, notably [Jekyl](https://jekyllrb.com/) and [Hugo](https://gohugo.io/).  
 
@@ -11,7 +12,7 @@ Fuel also has the ability to take in JSON-enhanced markdown (I should totally tr
 1. use the JSON in your website **as variables**
 2. store the JSON **and** content into a database   
 
-# How does it work?
+## How does it work?
 
 Given a normal markdown file or (as in the example below) a JSON-enahanced markdown file:
 
@@ -63,7 +64,6 @@ This will install fuel into your $GOPATH/bin directory.
 $ go install
 ```
 
-
 # How do you run it?
 Fuel is a command-line application, so you'll run it via a terminal window.
 
@@ -94,12 +94,13 @@ Fuel does the following:
 
 Insert
 
+# Developers
 
-# What databases are supported?
+## What databases are supported?
 * (Not started) postgresql
 * (Not started) DynamoDB
 
 
-# (Developers) What else needs to be done?
+## What else needs to be done?
 
 see the [Todo file](./Todo.md)
