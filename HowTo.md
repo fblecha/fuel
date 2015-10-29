@@ -18,9 +18,39 @@ That command tells fuel to create a new installation that's setup for creating y
 
 ## The content directory
 
+The content directory contains all your markdown files.  The directory structure here is mirrored in your site.  For example if you have:
 
+content/
+  index.md
+
+Then that index.md will be used to build your index.html.  Let's say you want a very traditional site layout:
+
+content/
+  index.md
+  about/
+    index.md
+  dogs/
+    cairnterrier.md
+    pug.md
+  contact/
+    index.md
+
+Then you'll get the following web site:
+
+/
+  index.html
+    about/
+      index.html
+    dogs/
+      cairnterrier.html
+      pug.html
+    contact/
+      index.html
+  style/
 
 ## The config directory
+
+For future use, not used in the current release.
 
 ## The views directory
 
